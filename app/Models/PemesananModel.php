@@ -9,13 +9,16 @@ class PemesananModel extends Model
     protected $table            = 'pemesanan';
     protected $primaryKey       = 'id';
     protected $allowedFields    = [
+        'order_id',
         'user_id', 
         'nama_pemesan',
         'lapangan_id', 
         'tanggal_pesan', 
         'jam_mulai', 
-        'jam_selesai', 
-        'status', 
+        'jam_selesai',
+        'total_bayar',
+        'status',
+        'payment_type',
         'catatan'
     ];
 

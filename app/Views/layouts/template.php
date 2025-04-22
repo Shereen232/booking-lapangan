@@ -21,6 +21,13 @@
   <link rel="stylesheet" href="<?= base_url('assets/css/style-preset.css') ?>">
 </head>
 <body data-pc-preset="preset-1" data-pc-direction="ltr" data-pc-theme="light">
+<div class="modal fade" id="modalBooking" tabindex="-1" aria-labelledby="modalBookingLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+    <div class="modal-content" style="height: 100vh;">
+      <div id="snap-container" style="width: 100%; height:100%"></div>
+    </div>
+  </div>
+</div>
   <!-- [ Pre-loader ] start -->
 <div class="loader-bg">
   <div class="loader-track">

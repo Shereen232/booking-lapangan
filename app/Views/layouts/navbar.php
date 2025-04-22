@@ -33,7 +33,7 @@
           </a>
         </li>
         <li class="pc-item">
-          <a href="<?= base_url('akun') ?>" class="pc-link">
+          <a href="<?= base_url('pelanggan/akun') ?>" class="pc-link">
             <span class="pc-micon"><i class="ti ti-user-circle"></i></span>
             <span class="pc-mtext">Akun Saya</span>
           </a>
