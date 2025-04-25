@@ -27,7 +27,13 @@
           </a>
         </li>
         <li class="pc-item">
-          <a href="<?= base_url('jadwal-saya') ?>" class="pc-link">
+          <a href="<?= base_url('pelanggan/pembayaran') ?>" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-calendar-event"></i></span>
+            <span class="pc-mtext">Pembayaran</span>
+          </a>
+        </li>
+        <li class="pc-item">
+          <a href="<?= base_url('pelanggan/jadwal-saya') ?>" class="pc-link">
             <span class="pc-micon"><i class="ti ti-calendar-event"></i></span>
             <span class="pc-mtext">Jadwal Saya</span>
           </a>

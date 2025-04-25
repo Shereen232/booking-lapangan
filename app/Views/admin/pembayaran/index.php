@@ -11,13 +11,12 @@
         <thead>
           <tr>
             <th>No</th>
-            <th>Nama Pemesan</th>
+            <th>Nama Pelanggan</th>
             <th>Lapangan</th>
             <th>Tanggal</th>
-            <th>Jam Mulai</th>
-            <th>Jam Selesai</th>
+            <th>Status Pembayaran</th>
+            <th>Metode Pembayaran</th>
             <th>Total Bayar</th>
-            <th>Status</th>
           </tr>
         </thead>
         <tbody>
@@ -27,14 +26,13 @@
               <td><?= esc($p['nama_pemesan']) ?></td>
               <td><?= esc($p['nama_lapangan']) ?></td>
               <td><?= date('d M Y', strtotime($p['tanggal_pesan'])) ?></td>
-              <td><?= $p['jam_mulai'] ?></td>
-              <td><?= $p['jam_selesai'] ?></td>
-              <td>Rp<?= number_format($p['total_bayar'], 0, ',', '.') ?></td>
               <td>
                 <span class="badge bg-<?= $p['status'] == 'pending' ? 'warning' : 'success' ?>">
                   <?= ucfirst($p['status']) ?>
                 </span>
               </td>
+              <td><?= $p['payment_type'] ?></td>
+              <td>Rp<?= number_format($p['total_bayar'], 0, ',', '.') ?></td>
             </tr>
           <?php endforeach ?>
         </tbody>

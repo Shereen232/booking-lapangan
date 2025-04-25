@@ -24,34 +24,28 @@ class PemesananController extends BaseController
         return view('admin/pemesanan/index', $data);
     }
 
-    public function edit($id)
-    {
-        $pemesanan = $this->pemesananModel->find($id);
+    // public function edit($id)
+    // {
+    //     $pemesanan = $this->pemesananModel->find($id);
 
-        if (!$pemesanan) {
-            return redirect()->to(base_url('admin/pemesanan'))->with('error', 'Data tidak ditemukan.');
-        }
+    //     if (!$pemesanan) {
+    //         return redirect()->to(base_url('admin/pemesanan'))->with('error', 'Data tidak ditemukan.');
+    //     }
 
-        $data = [
-            'title' => 'Ubah Status Pemesanan',
-            'pemesanan' => $pemesanan
-        ];
+    //     $data = [
+    //         'title' => 'Ubah Status Pemesanan',
+    //         'pemesanan' => $pemesanan
+    //     ];
 
-        return view('admin/pemesanan/edit', $data);
-    }
+    //     return view('admin/pemesanan/edit', $data);
+    // }
 
-    public function update($id)
-    {
-        $status = $this->request->getPost('status');
+    // public function update($id)
+    // {
+    //     $status = $this->request->getPost('status');
 
-        $this->pemesananModel->update($id, ['status' => $status]);
+    //     $this->pemesananModel->update($id, ['status' => $status]);
 
-        return redirect()->to(base_url('admin/pemesanan'))->with('success', 'Status berhasil diperbarui.');
-    }
-
-    public function delete($id)
-    {
-        $this->pemesananModel->delete($id);
-        return redirect()->to(base_url('admin/pemesanan'))->with('success', 'Data pemesanan berhasil dihapus.');
-    }
+    //     return redirect()->to(base_url('admin/pemesanan'))->with('success', 'Status berhasil diperbarui.');
+    // }
 }

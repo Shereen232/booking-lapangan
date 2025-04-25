@@ -142,6 +142,7 @@
                         .then(data => {
                             console.log("Status pembayaran diperbarui:", data);
                             alert("Pembayaran berhasil dikonfirmasi!");
+                            modal.hide();
                             // Redirect atau tampilkan modal sukses, dll
                             
                         })

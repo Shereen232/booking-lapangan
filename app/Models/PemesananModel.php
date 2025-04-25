@@ -19,7 +19,8 @@ class PemesananModel extends Model
         'total_bayar',
         'status',
         'payment_type',
-        'catatan'
+        'catatan',
+        'snaptoken'
     ];
 
     protected $useTimestamps = true;
@@ -29,6 +30,14 @@ class PemesananModel extends Model
         return $this->select('pemesanan.*, users.nama as nama_pelanggan, lapangan.nama as nama_lapangan')
                     ->join('users', 'users.id = pemesanan.user_id')
                     ->join('lapangan', 'lapangan.id = pemesanan.lapangan_id');
+    }
+
+    public function getWithRelationUserId($id)
+    {
+        return $this->select('pemesanan.*, pemesanan.status as status_pembayaran, lapangan.*')
+                    ->join('lapangan', 'lapangan.id = pemesanan.lapangan_id')
+                    ->where('user_id', $id)
+                    ->findAll();
     }
 
     public function getWithRelationsLapangan()

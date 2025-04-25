@@ -16,6 +16,10 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], function($rout
     $routes->post('lapangan/update/(:num)', 'LapanganController::update/$1');
     $routes->put('lapangan/update/(:num)', 'LapanganController::update/$1');
     $routes->get('lapangan/delete/(:num)', 'LapanganController::delete/$1');
+
+    $routes->group('pembayaran', function ($routes) {
+        $routes->get('', 'PembayaranController::index');
+    });
 });
 
 $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], function ($routes) {
@@ -36,6 +40,15 @@ $routes->group('pelanggan', function ($routes) {
     $routes->get('pemesanan', 'Pelanggan\PemesananController::index');
     $routes->get('pemesanan/detail/(:num)', 'Pelanggan\PemesananController::detail/$1');
     $routes->post('pemesanan/simpan', 'Pelanggan\PemesananController::simpan');
+
+    $routes->group('pembayaran', function ($routes) {
+        $routes->get('', 'Pelanggan\PembayaranController::index');
+    });
+
+    $routes->group('jadwal-saya', function ($routes) {
+        $routes->get('', 'Pelanggan\JadwalController::index');
+    });
+
 });
 
 $routes->group('api', function ($routes) {
