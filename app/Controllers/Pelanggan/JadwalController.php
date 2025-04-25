@@ -21,7 +21,7 @@ class JadwalController extends BaseController
 
         // Ambil data satu per satu
         $userId = $session->get('user_id');
-        $data['jadwals'] = $this->pembayaranModel->getWithRelationUserId($userId);
+        $data['jadwals'] = $this->pembayaranModel->getJadwalByUserId($userId);
         return view('pelanggan/jadwal-saya/index', $data);
     }
 

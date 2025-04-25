@@ -27,6 +27,7 @@
       </div>
       <div class="card-body">
         <div class="row">
+          <?php if ($jadwals) : ?>
           <?php foreach ($jadwals as $jadwal): ?>
             <div class="col-md-4 mb-4">
               <div class="card h-100 shadow-sm border-0 hover-shadow">
@@ -60,6 +61,9 @@
               </div>
             </div>
           <?php endforeach; ?>
+          <?php else: ?>
+            <span class="text-center">Anda belum memiliki jadwal pesanan.</span>
+          <?php endif; ?>
         </div>
       </div>
     </div>

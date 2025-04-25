@@ -40,6 +40,15 @@ class PemesananModel extends Model
                     ->findAll();
     }
 
+    public function getJadwalByUserId($id)
+    {
+        return $this->select('pemesanan.*, pemesanan.status as status_pembayaran, lapangan.*')
+                    ->join('lapangan', 'lapangan.id = pemesanan.lapangan_id')
+                    ->where('user_id', $id)
+                    ->where('pemesanan.status', 'settlement')
+                    ->findAll();
+    }
+
     public function getWithRelationsLapangan()
     {
         return $this->select('pemesanan.*, lapangan.nama as nama_lapangan')

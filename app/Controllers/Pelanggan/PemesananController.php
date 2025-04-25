@@ -71,7 +71,7 @@ class PemesananController extends BaseController
             $catatan = $request->getPost('catatan');
 
             // ==== Simulasi session sementara ====
-            $userId = 1; // anggap user login id 1
+            $userId = session('user_id'); // anggap user login id 1
             $namaPemesan = 'User Dummy';
 
             // Ambil data harga per jam

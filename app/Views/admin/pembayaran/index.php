@@ -20,6 +20,7 @@
           </tr>
         </thead>
         <tbody>
+          <?php if ($pemesanan) : ?>
           <?php $no = 1; foreach ($pemesanan as $p): ?>
             <tr>
               <td><?= $no++ ?></td>
@@ -35,6 +36,9 @@
               <td>Rp<?= number_format($p['total_bayar'], 0, ',', '.') ?></td>
             </tr>
           <?php endforeach ?>
+          <?php else: ?>
+            <span class="text-center">Anda belum memiliki jadwal pesanan.</span>
+          <?php endif; ?>
         </tbody>
       </table>
     </div>
