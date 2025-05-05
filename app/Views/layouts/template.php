@@ -69,6 +69,7 @@
 <?= $this->include('layouts/footer') ?>
 
 <!-- [Page Specific JS] start -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="<?= base_url('assets/js/plugins/apexcharts.min.js') ?>"></script>
 <script src="<?= base_url('assets/js/pages/dashboard-default.js') ?>"></script>
 <script src="<?= base_url('assets/js/plugins/popper.min.js') ?>"></script>

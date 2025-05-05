@@ -41,7 +41,12 @@ class PelangganController extends BaseController
             'no_hp' => $this->request->getPost('no_hp'),
             'alamat' => $this->request->getPost('alamat'),
         ];
-
+        
+        $password = $this->request->getPost('password');
+        if (!empty($password)) {
+            $data['password'] = password_hash($password, PASSWORD_DEFAULT);
+        }
+    
         $userModel->update($id, $data);
 
         return redirect()->to('/admin/pelanggan')->with('success', 'Data pelanggan berhasil diperbarui.');

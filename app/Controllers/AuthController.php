@@ -26,8 +26,12 @@ class AuthController extends BaseController
                 'user_id' => $user['id'],
                 'nama' => $user['nama'],
                 'email' => $user['email'],
+                'no_hp' => $user['no_hp'],
+                'alamat' => $user['alamat'],
+                'role' => $user['role'],
                 'isLoggedIn' => true
             ]);
+            
             return redirect()->to('/admin');
         } else {
             return redirect()->back()->with('error', 'Email atau password salah');
@@ -71,6 +75,7 @@ class AuthController extends BaseController
             'no_hp'    => $this->request->getPost('no_hp'),
             'alamat'   => $this->request->getPost('alamat'),
             'password' => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT),
+            'role'     => 'pelanggan'
         ]);
 
         return redirect()->to('/login')->with('success', 'Registrasi berhasil! Silakan login.');
