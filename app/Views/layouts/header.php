@@ -53,7 +53,7 @@
         aria-haspopup="false"
         aria-expanded="false"
       >
-        <i class="ti ti-mail"></i>
+        
       </a>
       <div class="dropdown-menu dropdown-notification dropdown-menu-end pc-h-dropdown">
         <div class="dropdown-header d-flex align-items-center justify-content-between">

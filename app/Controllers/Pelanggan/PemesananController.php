@@ -72,7 +72,7 @@ class PemesananController extends BaseController
 
             // ==== Simulasi session sementara ====
             $userId = session('user_id'); // anggap user login id 1
-            $namaPemesan = 'User Dummy';
+            $namaPemesan = session('nama');
 
             // Ambil data harga per jam
             $lapanganModel = new \App\Models\LapanganModel();

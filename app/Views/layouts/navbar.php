@@ -25,7 +25,7 @@
           </li>
           <li class="pc-item">
             <a href="<?= base_url('pelanggan/pemesanan') ?>" class="pc-link">
-              <span class="pc-micon"><i class="ti ti-building-stadium"></i></span>
+              <span class="pc-micon"><i class="ti ti ti-soccer-field"></i></span>
               <span class="pc-mtext">Booking Lapangan</span>
             </a>
           </li>
@@ -43,7 +43,7 @@
           </li>
           <li class="pc-item">
             <a href="<?= base_url('pelanggan/akun') ?>" class="pc-link">
-              <span class="pc-micon"><i class="ti ti-user-circle"></i></span>
+              <span class="pc-micon"><i class="ti ti ti-user"></i></span>
               <span class="pc-mtext">Akun Saya</span>
             </a>
           </li>
@@ -54,21 +54,16 @@
             <span class="pc-micon"><i class="ti ti-settings"></i></span>
             <label>Menu Admin</label>
           </li>
-          <li class="pc-item">
-            <a href="<?= base_url('admin/dashboard') ?>" class="pc-link">
-              <span class="pc-micon"><i class="ti ti-layout-dashboard"></i></span>
-              <span class="pc-mtext">Dashboard</span>
-            </a>
-          </li>
+          
           <li class="pc-item">
             <a href="<?= base_url('admin/lapangan') ?>" class="pc-link">
-              <span class="pc-micon"><i class="ti ti-building-stadium"></i></span>
+              <span class="pc-micon"><i class="ti ti ti-soccer-field"></i></span>
               <span class="pc-mtext">Kelola Lapangan</span>
             </a>
           </li>
           <li class="pc-item">
             <a href="<?= base_url('admin/pemesanan') ?>" class="pc-link">
-              <span class="pc-micon"><i class="ti ti-calendar-check"></i></span>
+              <span class="pc-micon"><i class="ti ti ti-report"></i></span>
               <span class="pc-mtext">Data Pemesanan</span>
             </a>
           </li>
