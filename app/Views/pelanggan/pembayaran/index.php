@@ -39,6 +39,13 @@
                       data-snaptoken="<?= $order['snaptoken'] ?>">
                       💳 Bayar Sekarang
                     </button>
+                    <form action="<?= base_url('pelanggan/pemesanan/batalkan/') ?><?= $order['id_pesanan'] ?>" method="post">
+                      <?= csrf_field() ?>
+                      <button 
+                      class="btn btn-outline-danger w-100 btn-cencel">
+                       Batalkan
+                      </button>
+                    </form>
                   <?php else: ?>
                     <button class="btn btn-secondary w-100" disabled>✔️ Pembayaran Selesai</button>
                   <?php endif; ?>

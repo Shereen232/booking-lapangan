@@ -22,7 +22,7 @@ class PemesananModel extends Model
         'catatan',
         'snaptoken'
     ];
-
+    protected $useSoftDeletes = true;
     protected $useTimestamps = true;
 
     public function getWithRelations()
@@ -34,7 +34,7 @@ class PemesananModel extends Model
 
     public function getWithRelationUserId($id)
     {
-        return $this->select('pemesanan.*, pemesanan.status as status_pembayaran, lapangan.*')
+        return $this->select('pemesanan.*, pemesanan.status as status_pembayaran, pemesanan.id as id_pesanan, lapangan.*')
                     ->join('lapangan', 'lapangan.id = pemesanan.lapangan_id')
                     ->where('user_id', $id)
                     ->findAll();

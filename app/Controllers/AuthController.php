@@ -19,24 +19,37 @@ class AuthController extends BaseController
         $email = $this->request->getPost('email');
         $password = $this->request->getPost('password');
 
+        // Cari user berdasarkan email
         $user = $model->where('email', $email)->first();
 
         if ($user && password_verify($password, $user['password'])) {
+            // Simpan data user ke dalam session
             $session->set([
-                'user_id' => $user['id'],
-                'nama' => $user['nama'],
-                'email' => $user['email'],
-                'no_hp' => $user['no_hp'],
-                'alamat' => $user['alamat'],
-                'role' => $user['role'],
-                'isLoggedIn' => true
+                'user_id'   => $user['id'],
+                'nama'      => $user['nama'],
+                'email'     => $user['email'],
+                'no_hp'     => $user['no_hp'],
+                'alamat'    => $user['alamat'],
+                'role'      => $user['role'],
+                'isLoggedIn'=> true
             ]);
-            
-            return redirect()->to('/admin');
+
+            // Arahkan sesuai role
+            if ($user['role'] === 'admin') {
+                return redirect()->to('/admin');
+            } elseif ($user['role'] === 'pelanggan') {
+                return redirect()->to('/pelanggan');
+            } else {
+                // fallback jika role tidak dikenal
+                return redirect()->to('/')->with('error', 'Role tidak dikenali.');
+            }
+
         } else {
-            return redirect()->back()->with('error', 'Email atau password salah');
+            // Jika gagal login
+            return redirect()->back()->withInput()->with('error', 'Email atau password salah');
         }
     }
+
 
     public function logout()
     {
@@ -53,21 +66,26 @@ class AuthController extends BaseController
     {
         $validation = \Config\Services::validation();
 
-        // Validasi input
-        $validation->setRules([
-            'nama'     => 'required|min_length[3]',
-            'email'    => 'required|valid_email|is_unique[users.email]',
-            'no_hp'    => 'required|min_length[10]',
-            'alamat'   => 'required',
-            'password' => 'required|min_length[6]'
-        ]);
+        // Aturan validasi input
+        $rules = [
+            'nama'              => 'required|min_length[3]',
+            'email'             => 'required|valid_email|is_unique[users.email]',
+            'no_hp'             => 'required|numeric|min_length[11]',
+            'alamat'            => 'required|min_length[5]',
+            'password'          => 'required|min_length[6]',
+            'password_confirm'  => 'required|matches[password]'
+        ];
 
-        if (!$validation->withRequest($this->request)->run()) {
-            return redirect()->back()->withInput()->with('error', implode('<br>', $validation->getErrors()));
+        // Jalankan validasi
+        if (!$this->validate($rules)) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Mohon periksa kembali inputan Anda.')
+                ->with('validation', $validation);
         }
 
         // Simpan ke database
-        $userModel = new UserModel();
+        $userModel = new \App\Models\UserModel();
 
         $userModel->insert([
             'nama'     => $this->request->getPost('nama'),
@@ -80,4 +98,5 @@ class AuthController extends BaseController
 
         return redirect()->to('/login')->with('success', 'Registrasi berhasil! Silakan login.');
     }
+
 }

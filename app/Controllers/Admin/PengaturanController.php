@@ -27,7 +27,6 @@ class PengaturanController extends BaseController
         $data = [
             'jam_buka' => $this->request->getPost('jam_buka'),
             'jam_tutup' => $this->request->getPost('jam_tutup'),
-            'harga_per_jam' => $this->request->getPost('harga_per_jam'),
             'durasi_minimal' => $this->request->getPost('durasi_minimal'),
             'kontak_admin' => $this->request->getPost('kontak_admin')
         ];

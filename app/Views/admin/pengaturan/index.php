@@ -20,11 +20,6 @@
           <input type="time" class="form-control" id="jam_tutup" name="jam_tutup" value="<?= $pengaturan['jam_tutup'] ?? '' ?>" required>
         </div>
 
-        <!-- <div class="mb-3">
-          <label for="harga_per_jam" class="form-label">Harga per Jam (Rp)</label>
-          <input type="number" class="form-control" id="harga_per_jam" name="harga_per_jam" value="<?= $pengaturan['harga_per_jam'] ?? '' ?>" required>
-        </div> -->
-
         <div class="mb-3">
           <label for="durasi_minimal" class="form-label">Durasi Minimal (jam)</label>
           <input type="number" class="form-control" id="durasi_minimal" name="durasi_minimal" value="<?= $pengaturan['durasi_minimal'] ?? '' ?>" required>

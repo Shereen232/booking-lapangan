@@ -170,4 +170,18 @@ class PemesananController extends BaseController
         return $this->response->setJSON(['status' => 'success']);
     }
 
+    public function delete($id)
+    {
+        $pemesananModel = new \App\Models\PemesananModel();
+        $pemesanan = $pemesananModel->find($id);
+
+        if (!$pemesanan) {
+            return redirect()->to(base_url('pelanggan/pembayaran'))->with('error', 'Data tidak ditemukan.');
+        }
+
+        $pemesananModel->delete($id);
+
+        return redirect()->to(base_url('pelanggan/pembayaran'))->with('success', 'Berhasil.');
+    }
+
 }

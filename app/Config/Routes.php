@@ -5,10 +5,14 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
-$routes->get('/admin', 'AdminController::dashboard');
+
+
+
+
 
 // Grouping route admin (biar rapi)
 $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], function($routes) {
+    $routes->get('/', 'AdminController::dashboard');
     $routes->get('lapangan', 'LapanganController::index');
     $routes->get('lapangan/create', 'LapanganController::create');
     $routes->post('lapangan/store', 'LapanganController::store');
@@ -37,9 +41,11 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], function ($rou
 
 // Route untuk pelanggan - pemesanan
 $routes->group('pelanggan', function ($routes) {
+    $routes->get('/', 'Pelanggan\DashboardController::index');
     $routes->get('pemesanan', 'Pelanggan\PemesananController::index');
     $routes->get('pemesanan/detail/(:num)', 'Pelanggan\PemesananController::detail/$1');
     $routes->post('pemesanan/simpan', 'Pelanggan\PemesananController::simpan');
+    $routes->post('pemesanan/batalkan/(:num)', 'Pelanggan\PemesananController::delete/$1');
 
     $routes->group('pembayaran', function ($routes) {
         $routes->get('', 'Pelanggan\PembayaranController::index');

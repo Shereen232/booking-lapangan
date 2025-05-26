@@ -9,20 +9,15 @@
     <?php $role = session()->get('role'); ?>
       <ul class="pc-navbar">
 
-        <!-- Menu Umum (semua user) -->
-        <li class="pc-item">
-          <a href="<?= base_url('/') ?>" class="pc-link">
-            <span class="pc-micon"><i class="ti ti-home"></i></span>
-            <span class="pc-mtext">Beranda</span>
-          </a>
-        </li>
-
         <?php if ($role === 'pelanggan'): ?>
           <!-- === Menu Pelanggan === -->
-          <li class="pc-item pc-caption">
-            <span class="pc-micon"><i class="ti ti-user"></i></span>
-            <label>Menu Pelanggan</label>
+          <li class="pc-item">
+            <a href="<?= base_url('/pelanggan') ?>" class="pc-link">
+              <span class="pc-micon"><i class="ti ti-home"></i></span>
+              <span class="pc-mtext">Beranda</span>
+            </a>
           </li>
+          
           <li class="pc-item">
             <a href="<?= base_url('pelanggan/pemesanan') ?>" class="pc-link">
               <span class="pc-micon"><i class="ti ti ti-soccer-field"></i></span>
@@ -50,9 +45,11 @@
 
         <?php elseif ($role === 'admin'): ?>
           <!-- === Menu Admin === -->
-          <li class="pc-item pc-caption">
-            <span class="pc-micon"><i class="ti ti-settings"></i></span>
-            <label>Menu Admin</label>
+          <li class="pc-item">
+            <a href="<?= base_url('/admin') ?>" class="pc-link">
+              <span class="pc-micon"><i class="ti ti-home"></i></span>
+              <span class="pc-mtext">Beranda</span>
+            </a>
           </li>
           
           <li class="pc-item">

@@ -28,7 +28,7 @@
             <td><?= esc($l['deskripsi']) ?></td>
             <td>
               <?php if ($l['foto']): ?>
-                <img src="<?= base_url('uploads/lapangan/' . $l['foto']) ?>" width="100" alt="Foto Lapangan">
+                <img src="<?= base_url('uploads/lapangan/' . $l['foto']) ?>" width="150" height="100" alt="Foto Lapangan">
               <?php else: ?>
                 <span class="text-muted">Tidak ada foto</span>
               <?php endif; ?>

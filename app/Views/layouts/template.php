@@ -42,20 +42,7 @@
 <div class="pc-container">
   <div class="pc-content">
   <div class="page-header">
-        <div class="page-block">
-          <div class="row align-items-center">
-            <div class="col-md-12">
-              <div class="page-header-title">
-                <h5 class="m-b-10">Sample Page</h5>
-              </div>
-              <ul class="breadcrumb">
-                <li class="breadcrumb-item"><a href="../dashboard/index.html">Home</a></li>
-                <li class="breadcrumb-item"><a href="javascript: void(0)">Other</a></li>
-                <li class="breadcrumb-item" aria-current="page">Sample Page</li>
-              </ul>
-            </div>
-          </div>
-        </div>
+        
       </div>
       <!-- [ breadcrumb ] end -->
 
@@ -83,5 +70,27 @@
 <script>layout_rtl_change('false');</script>
 <script>preset_change("preset-1");</script>
 <script>font_change("Public-Sans");</script>
+<?php if (session('success')) : ?>
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: "<?= session('success') ?>",
+            timer: 3000,
+            showConfirmButton: false
+        });
+    </script>
+<?php endif; ?>
+<?php if (session('error')) : ?>
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: "<?= session('error') ?>",
+            timer: 3000,
+            showConfirmButton: false
+        });
+    </script>
+<?php endif; ?>
 </body>
 </html>

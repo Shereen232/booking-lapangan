@@ -4,7 +4,7 @@
 <div class="card shadow p-4 mb-4">
     <div class="row">
         <div class="col-md-6 mb-3">
-            <img src="<?= base_url('uploads/lapangan/' . $lapangan['foto']) ?>" class="img-fluid rounded border shadow-sm" alt="Foto Lapangan">
+            <img src="<?= base_url('uploads/lapangan/' . $lapangan['foto']) ?>" class="img-fluid rounded border shadow-sm" alt="Foto Lapangan" style="height: 400px; width:100%;">
         </div>
         <div class="col-md-6">
             <h3 class="fw-bold"><?= $lapangan['nama'] ?></h3>
