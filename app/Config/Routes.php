@@ -6,78 +6,104 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 
-
-
-
-
-// Grouping route admin (biar rapi)
-$routes->group('admin', ['namespace' => 'App\Controllers\Admin'], function($routes) {
-    $routes->get('/', 'AdminController::dashboard');
-    $routes->get('lapangan', 'LapanganController::index');
-    $routes->get('lapangan/create', 'LapanganController::create');
-    $routes->post('lapangan/store', 'LapanganController::store');
-    $routes->get('lapangan/edit/(:num)', 'LapanganController::edit/$1');
-    $routes->post('lapangan/update/(:num)', 'LapanganController::update/$1');
-    $routes->put('lapangan/update/(:num)', 'LapanganController::update/$1');
-    $routes->get('lapangan/delete/(:num)', 'LapanganController::delete/$1');
-
-    $routes->group('pembayaran', function ($routes) {
-        $routes->get('', 'PembayaranController::index');
-    });
-});
-
-$routes->group('admin', ['namespace' => 'App\Controllers\Admin'], function ($routes) {
-    $routes->get('pengaturan', 'PengaturanController::index');
-    $routes->post('pengaturan/update', 'PengaturanController::update');
-});
-
-// Routing untuk Kelola Pemesanan - Admin
-$routes->group('admin', ['namespace' => 'App\Controllers\Admin'], function ($routes) {
-    $routes->get('pemesanan', 'PemesananController::index');
-    $routes->get('pemesanan/edit/(:num)', 'PemesananController::edit/$1');
-    $routes->post('pemesanan/update/(:num)', 'PemesananController::update/$1');
-    $routes->get('pemesanan/delete/(:num)', 'PemesananController::delete/$1');
-});
-
-// Route untuk pelanggan - pemesanan
-$routes->group('pelanggan', function ($routes) {
-    $routes->get('/', 'Pelanggan\DashboardController::index');
-    $routes->get('pemesanan', 'Pelanggan\PemesananController::index');
-    $routes->get('pemesanan/detail/(:num)', 'Pelanggan\PemesananController::detail/$1');
-    $routes->post('pemesanan/simpan', 'Pelanggan\PemesananController::simpan');
-    $routes->post('pemesanan/batalkan/(:num)', 'Pelanggan\PemesananController::delete/$1');
-
-    $routes->group('pembayaran', function ($routes) {
-        $routes->get('', 'Pelanggan\PembayaranController::index');
-    });
-
-    $routes->group('jadwal-saya', function ($routes) {
-        $routes->get('', 'Pelanggan\JadwalController::index');
-    });
-
-});
-
-$routes->group('api', function ($routes) {
-    $routes->post('pemesanan/update-status', 'Pelanggan\PemesananController::updateStatus');
-});
-
-$routes->group('pelanggan', ['namespace' => 'App\Controllers\Pelanggan'], function($routes) {
-    $routes->get('akun', 'AkunController::index');
-    $routes->post('akun/update', 'AkunController::update');
-});
-
-$routes->group('admin', ['namespace' => 'App\Controllers\Admin'], function($routes) {
-    $routes->get('pelanggan', 'PelangganController::index');
-    $routes->get('pelanggan/edit/(:num)', 'PelangganController::edit/$1');
-    $routes->post('pelanggan/update/(:num)', 'PelangganController::update/$1');
-    $routes->get('pelanggan/delete/(:num)', 'PelangganController::delete/$1');
-});
-
-$routes->get('login', 'AuthController::loginForm');
+// ===========================
+// AUTH ROUTES
+// ===========================
+$routes->get('login', 'AuthController::loginForm', ['filter' => 'alreadyLoggedIn']);
 $routes->post('login', 'AuthController::login');
 $routes->get('logout', 'AuthController::logout');
-$routes->get('/register', 'AuthController::register');
-$routes->post('/register/process', 'AuthController::processRegister');
+$routes->get('register', 'AuthController::register', ['filter' => 'alreadyLoggedIn']);
+$routes->post('register/process', 'AuthController::processRegister');
 
 
+// ===========================
+// ADMIN ROUTES
+// ===========================
+$routes->group('admin', ['namespace' => 'App\Controllers\Admin','filter' => 'auth'], function($routes) {
 
+    // Dashboard
+    $routes->get('/', 'AdminController::dashboard');
+
+    // Kelola Lapangan
+    $routes->group('lapangan', function($routes) {
+        $routes->get('/', 'LapanganController::index');
+        $routes->get('create', 'LapanganController::create');
+        $routes->post('store', 'LapanganController::store');
+        $routes->get('edit/(:num)', 'LapanganController::edit/$1');
+        $routes->post('update/(:num)', 'LapanganController::update/$1');
+        $routes->put('update/(:num)', 'LapanganController::update/$1'); // Opsional, tergantung form method
+        $routes->get('delete/(:num)', 'LapanganController::delete/$1');
+    });
+
+    // Kelola Pemesanan
+    $routes->group('pemesanan', function($routes) {
+        $routes->get('/', 'PemesananController::index');
+        $routes->get('edit/(:num)', 'PemesananController::edit/$1');
+        $routes->post('update/(:num)', 'PemesananController::update/$1');
+        $routes->get('delete/(:num)', 'PemesananController::delete/$1');
+    });
+
+    // Pengaturan
+    $routes->group('pengaturan', function($routes) {
+        $routes->get('/', 'PengaturanController::index');
+        $routes->post('update', 'PengaturanController::update');
+    });
+
+    // Kelola Pelanggan
+    $routes->group('pelanggan', function($routes) {
+        $routes->get('/', 'PelangganController::index');
+        $routes->get('edit/(:num)', 'PelangganController::edit/$1');
+        $routes->post('update/(:num)', 'PelangganController::update/$1');
+        $routes->get('delete/(:num)', 'PelangganController::delete/$1');
+    });
+
+    // Pembayaran
+    $routes->group('pembayaran', function ($routes) {
+        $routes->get('/', 'PembayaranController::index');
+    });
+
+});
+
+
+// ===========================
+// PELANGGAN ROUTES
+// ===========================
+$routes->group('pelanggan', ['namespace' => 'App\Controllers\Pelanggan', 'filter' => 'auth'], function($routes) {
+
+    // Dashboard
+    $routes->get('/', 'DashboardController::index');
+
+    // Pemesanan
+    $routes->group('pemesanan', function($routes) {
+        $routes->get('/', 'PemesananController::index');
+        $routes->get('detail/(:num)', 'PemesananController::detail/$1');
+        $routes->post('simpan', 'PemesananController::simpan');
+        $routes->post('batalkan/(:num)', 'PemesananController::delete/$1');
+    });
+
+    // Pembayaran
+    $routes->group('pembayaran', function ($routes) {
+        $routes->get('/', 'PembayaranController::index');
+    });
+
+    // Jadwal Saya
+    $routes->group('jadwal-saya', function ($routes) {
+        $routes->get('/', 'JadwalController::index');
+    });
+
+    // Akun
+    $routes->group('akun', function($routes) {
+        $routes->get('/', 'AkunController::index');
+        $routes->post('update', 'AkunController::update');
+    });
+
+});
+
+
+// ===========================
+// API ROUTES
+// ===========================
+$routes->group('api', ['filter' => 'auth'], function ($routes) {
+    $routes->post('pemesanan/update-status', 'Pelanggan\PemesananController::updateStatus');
+    $routes->get('cekJamKosong/(:segment)', 'Api\BookingApi::cekJamKosong/$1');
+});

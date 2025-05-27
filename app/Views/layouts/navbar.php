@@ -1,8 +1,8 @@
 <nav class="pc-sidebar">
   <div class="navbar-wrapper">
     <div class="m-header">
-      <a href="<?= base_url('dashboard') ?>" class="b-brand text-primary">
-        <img src="<?= base_url('assets/images/logo-dark.svg') ?>" class="img-fluid logo-lg" alt="logo">
+      <a href="#" class="b-brand text-primary">
+        <img src="<?= base_url('assets/images/logo2.JPG') ?>" class="img-fluid logo-lg" alt="logo">
       </a>
     </div>
     <div class="navbar-content">

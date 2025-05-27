@@ -37,22 +37,20 @@
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label for="tanggal" class="form-label">Tanggal</label>
-                <input type="date" name="tanggal" class="form-control" required value="<?= date('Y-m-d') ?>">
+                <input id="tanggal" type="date" name="tanggal" class="form-control" required min="<?= date('Y-m-d') ?>" value="<?= date('Y-m-d') ?>">
             </div>
+
             <div class="col-md-3 mb-3">
                 <label for="jam_mulai" class="form-label">Jam Mulai</label>
                 <select name="jam_mulai" id="jam_mulai" class="form-select" required>
-                    <?php for ($i = 7; $i <= 21; $i++): ?>
-                        <option value="<?= sprintf('%02d:00', $i) ?>"><?= sprintf('%02d:00', $i) ?></option>
-                    <?php endfor; ?>
+                    <!-- Jam akan diisi via AJAX -->
                 </select>
             </div>
+
             <div class="col-md-3 mb-3">
                 <label for="jam_selesai" class="form-label">Jam Selesai</label>
                 <select name="jam_selesai" id="jam_selesai" class="form-select" required>
-                    <?php for ($i = 8; $i <= 22; $i++): ?>
-                        <option value="<?= sprintf('%02d:00', $i) ?>"><?= sprintf('%02d:00', $i) ?></option>
-                    <?php endfor; ?>
+                    <!-- Jam selesai akan diisi setelah memilih jam mulai -->
                 </select>
             </div>
         </div>
@@ -91,6 +89,65 @@
         <button type="submit" class="btn btn-primary w-100 py-2 fs-5">🛒 Pesan Sekarang</button>
     </form>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        changeDateBooking(document.getElementById('tanggal'));
+    });
+
+  // Fungsi untuk update pilihan jam mulai dan selesai
+    let slotList = [];
+
+    function timeToMinutes(t) {
+        let [h, m] = t.split(':');
+        return parseInt(h) * 60 + parseInt(m);
+    }
+
+    function getSlotsBetween(startIndex) {
+        let result = [];
+        for (let i = startIndex + 1; i <= slotList.length; i++) {
+            let endSlot = slotList[i - 1].split(' - ')[1];
+            result.push(endSlot);
+        }
+        return result;
+    }
+
+    $('#jam_mulai').on('change', function () {
+        let selectedStart = $(this).val();
+        let index = $('#jam_mulai option:selected').data('index');
+
+        $('#jam_selesai').empty();
+
+        let slotAfter = getSlotsBetween(index);
+        slotAfter.forEach((end) => {
+            $('#jam_selesai').append(`<option value="${end}">${end}</option>`);
+        });
+    });
+
+    $('#tanggal').on('change', function () {
+        changeDateBooking(this);
+    });
+
+    function changeDateBooking(elem) {
+        let tanggal = $(elem).val();
+        $('#jam_mulai').empty();
+        $('#jam_selesai').empty();
+
+        $.get('/api/cekJamKosong/' + tanggal, function (res) {
+            slotList = res.available_slots;
+
+            slotList.forEach((slot, i) => {
+                let start = slot.split(' - ')[0].slice(0, 5);
+                $('#jam_mulai').append(`<option value="${start}" data-index="${i}">${start}</option>`);
+            });
+
+            // Trigger isi jam selesai
+            $('#jam_mulai').trigger('change');
+        });
+    }
+</script>
 
 <script>
     document.getElementById('formBooking').addEventListener('submit', async function (e) {

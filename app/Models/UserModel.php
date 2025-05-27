@@ -6,6 +6,9 @@ use CodeIgniter\Model;
 
 class UserModel extends Model
 {
+    const ADMIN = 'admin';
+    const PELANGGAN = 'pelanggan';
+
     protected $table = 'users';
     protected $primaryKey = 'id';
 

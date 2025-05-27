@@ -56,4 +56,9 @@ class PemesananModel extends Model
                     ->findAll();
     }
 
+    public function getBookingByDate($tanggal)
+    {
+        return $this->where('tanggal_pesan', $tanggal)->findAll();
+    }
+
 }
