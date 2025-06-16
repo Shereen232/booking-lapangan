@@ -2,7 +2,7 @@
   <div class="navbar-wrapper">
     <div class="m-header">
       <a href="#" class="b-brand text-primary">
-        <img src="<?= base_url('assets/images/logo2.JPG') ?>" class="img-fluid logo-lg" alt="logo">
+        <h2>Get Futsal</h2>
       </a>
     </div>
     <div class="navbar-content">

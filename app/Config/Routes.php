@@ -32,7 +32,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin','filter' => 'aut
         $routes->get('edit/(:num)', 'LapanganController::edit/$1');
         $routes->post('update/(:num)', 'LapanganController::update/$1');
         $routes->put('update/(:num)', 'LapanganController::update/$1'); // Opsional, tergantung form method
-        $routes->get('delete/(:num)', 'LapanganController::delete/$1');
+        $routes->post('delete/(:num)', 'LapanganController::delete/$1');
     });
 
     // Kelola Pemesanan

@@ -33,12 +33,7 @@
         </form>
       </div>
     </li>
-    <li class="pc-h-item d-none d-md-inline-flex">
-      <form class="header-search">
-        <i data-feather="search" class="icon-search"></i>
-        <input type="search" class="form-control" placeholder="Search here. . .">
-      </form>
-    </li>
+    
   </ul>
 </div>
 <!-- [Mobile Media Block end] -->
@@ -92,7 +87,7 @@
 
         <div class="tab-content" id="mysrpTabContent">
           <div class="tab-pane fade show active" id="drp-tab-1" role="tabpanel" aria-labelledby="drp-t1" tabindex="0">
-            <a href="#!" class="dropdown-item">
+            <a href="<?= base_url('pelanggan/akun') ?>" class="dropdown-item">
               <i class="ti ti-edit-circle"></i>
               <span>Edit Profile</span>
             </a>

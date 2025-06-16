@@ -26,6 +26,11 @@
         <div class="form-text">Format: JPG, JPEG, PNG. Maks 2MB.</div>
       </div>
 
+       <div class="mb-3">
+        <label for="harga_per_jam" class="form-label">Harga per Jam (Rp)</label>
+        <input type="number" name="harga_per_jam" id="harga_per_jam" class="form-control" placeholder="masukan harga" min="0" required>
+      </div>
+
       <div class="d-flex justify-content-between">
         <a href="<?= base_url('admin/lapangan') ?>" class="btn btn-secondary">
           <i class="ti ti-arrow-left"></i> Kembali

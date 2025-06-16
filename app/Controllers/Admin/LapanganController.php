@@ -38,6 +38,7 @@ class LapanganController extends BaseController
         $this->lapanganModel->save([
             'nama' => $this->request->getPost('nama'),
             'deskripsi' => $this->request->getPost('deskripsi'),
+            'harga_per_jam' => $this->request->getPost('harga_per_jam'), // ⬅️ Ditambahkan
             'foto' => $namaFoto
         ]);
 
@@ -80,6 +81,7 @@ class LapanganController extends BaseController
         $this->lapanganModel->update($id, [
             'nama' => $this->request->getPost('nama'),
             'deskripsi' => $this->request->getPost('deskripsi'),
+            'harga_per_jam' => $this->request->getPost('harga_per_jam'), // ⬅️ Ditambahkan
             'foto' => $namaFoto
         ]);
 

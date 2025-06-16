@@ -30,6 +30,11 @@
           <p class="text-muted">Belum ada foto.</p>
         <?php endif; ?>
 
+      <div class="mb-3">
+        <label for="harga_per_jam" class="form-label">Harga per Jam (Rp)</label>
+        <input type="number" name="harga_per_jam" id="harga_per_jam" class="form-control"  value="<?= esc($lapangan['harga_per_jam']) ?>" min="0" required>
+      </div>
+
         <label for="foto" class="form-label mt-2">Ganti Foto</label>
         <input type="file" name="foto" id="foto" class="form-control" accept="image/*">
         <div class="form-text">Kosongkan jika tidak ingin mengganti foto.</div>

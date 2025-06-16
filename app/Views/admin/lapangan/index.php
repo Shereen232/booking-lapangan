@@ -17,6 +17,7 @@
           <th>Nama Lapangan</th>
           <th>Deskripsi</th>
           <th>Foto</th>
+          <th>Harga per Jam</th> 
           <th>Aksi</th>
         </tr>
       </thead>
@@ -33,6 +34,7 @@
                 <span class="text-muted">Tidak ada foto</span>
               <?php endif; ?>
             </td>
+            <td>Rp <?= number_format($l['harga_per_jam'], 0, ',', '.') ?></td> 
             <td>
               <a href="<?= base_url('admin/lapangan/edit/' . $l['id']) ?>" class="btn btn-warning btn-sm">Edit</a>
               <form action="<?= base_url('admin/lapangan/delete/' . $l['id']) ?>" method="post" class="d-inline" onsubmit="return confirm('Yakin hapus data?')">
