@@ -24,7 +24,7 @@
           <div class="card shadow-lg rounded-4">
             <div class="card-body px-4 py-5">
               <div class="text-center mb-4">
-                <img src="<?= base_url('assets/images/logo-dark.svg') ?>" alt="Logo" class="mb-3" style="height: 50px;">
+                <img src="<?= base_url('assets/images/logo2.JPG') ?>" alt="Logo" class="mb-3" style="height: 250px;">
                 <h3 class="fw-bold">Selamat Datang Kembali</h3>
                 <p class="text-muted small">Silakan login untuk melanjutkan</p>
               </div>
@@ -37,8 +37,8 @@
                 <?= csrf_field() ?>
 
                 <div class="mb-3">
-                  <label for="email" class="form-label">Email</label>
-                  <input type="email" class="form-control" name="email" placeholder="Masukkan email" required value="<?= old('email') ?>">
+                    <label for="login_identifier" class="form-label">Email atau Nama</label>
+                    <input type="text" class="form-control" id="login_identifier" name="login_identifier" placeholder="Masukkan email atau nama Anda" required>
                 </div>
 
                 <div class="mb-3">

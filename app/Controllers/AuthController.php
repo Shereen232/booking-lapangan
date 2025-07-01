@@ -16,11 +16,13 @@ class AuthController extends BaseController
     {
         $session = session();
         $model = new UserModel();
-        $email = $this->request->getPost('email');
+        $loginIdentifier = $this->request->getPost('login_identifier'); // Could be email or name
         $password = $this->request->getPost('password');
 
-        // Cari user berdasarkan email
-        $user = $model->where('email', $email)->first();
+        // Cari user berdasarkan email atau nama
+        $user = $model->where('email', $loginIdentifier)
+                      ->orWhere('nama', $loginIdentifier)
+                      ->first();
 
         if ($user && password_verify($password, $user['password'])) {
             // Simpan data user ke dalam session
@@ -43,13 +45,11 @@ class AuthController extends BaseController
                 // fallback jika role tidak dikenal
                 return redirect()->to('/')->with('error', 'Role tidak dikenali.');
             }
-
         } else {
             // Jika gagal login
-            return redirect()->back()->withInput()->with('error', 'Email atau password salah');
+            return redirect()->back()->withInput()->with('error', 'Email/Nama atau password salah');
         }
     }
-
 
     public function logout()
     {

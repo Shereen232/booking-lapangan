@@ -9,6 +9,7 @@ use CodeIgniter\Router\RouteCollection;
 // ===========================
 // AUTH ROUTES
 // ===========================
+$routes->get('/', 'Home::index');
 $routes->get('login', 'AuthController::loginForm', ['filter' => 'alreadyLoggedIn']);
 $routes->post('login', 'AuthController::login');
 $routes->get('logout', 'AuthController::logout');
