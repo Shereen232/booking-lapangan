@@ -18,7 +18,7 @@ class PembayaranController extends BaseController
     {
         $data = [
             'title' => 'Data Pemesanan',
-            'pemesanan' => $this->pemesananModel->getWithRelations()->findAll()
+            'pemesanan' => $this->pemesananModel->getAllPemesanan()
         ];
 
         return view('admin/pembayaran/index', $data);

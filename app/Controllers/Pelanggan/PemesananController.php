@@ -60,6 +60,7 @@ class PemesananController extends BaseController
     // Simpan pemesanan
     public function simpan()
     {
+        $session = session();
         try {
             $request = service('request');
             $lapanganId = $request->getPost('lapangan_id');
@@ -71,8 +72,8 @@ class PemesananController extends BaseController
             $catatan = $request->getPost('catatan');
 
             // ==== Simulasi session sementara ====
-            $userId = session('user_id'); // anggap user login id 1
-            $namaPemesan = session('nama');
+            $userId = $session->get('user_id'); // anggap user login id 1
+            $namaPemesan = $session->get('nama');
 
             // Ambil data harga per jam
             $lapanganModel = new \App\Models\LapanganModel();

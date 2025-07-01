@@ -6,9 +6,22 @@ use CodeIgniter\Model;
 
 class PemesananModel extends Model
 {
-    protected $table = 'pemesanan';
-    protected $primaryKey = 'id';
-    protected $allowedFields = ['id_lapangan', 'id_user', 'tanggal_pesan', 'jam_mulai', 'jam_selesai', 'total_bayar', 'status'];
+    protected $table            = 'pemesanan';
+    protected $primaryKey       = 'id';
+    protected $allowedFields    = [
+        'order_id',
+        'user_id', 
+        'nama_pemesan',
+        'lapangan_id', 
+        'tanggal_pesan', 
+        'jam_mulai', 
+        'jam_selesai',
+        'total_bayar',
+        'status',
+        'payment_type',
+        'catatan',
+        'snaptoken'
+    ];
 
     public function getPemesanan()
     {
@@ -57,6 +70,28 @@ class PemesananModel extends Model
         $builder->where('pemesanan.tanggal_pesan <=', $endDate);
 
         return $builder->get()->getResultArray();
+    }
+
+    public function getWithRelationUserId($userId)
+    {
+        return $this->select('pemesanan.*, pemesanan.status as status_pembayaran, pemesanan.id as id_pesanan, lapangan.*')
+                    ->join('lapangan', 'lapangan.id = pemesanan.lapangan_id')
+                    ->where('user_id', $userId)
+                    ->findAll();
+    }
+
+    public function getJadwalByUserId($id)
+    {
+        return $this->select('pemesanan.*, pemesanan.status as status_pembayaran, lapangan.*')
+                    ->join('lapangan', 'lapangan.id = pemesanan.lapangan_id')
+                    ->where('user_id', $id)
+                    ->where('pemesanan.status', 'settlement')
+                    ->findAll();
+    }
+
+    public function getBookingByDate($tanggal)
+    {
+        return $this->where('tanggal_pesan', $tanggal)->findAll();
     }
     
 }

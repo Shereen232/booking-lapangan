@@ -1,3 +1,4 @@
+<?php date_default_timezone_set('Asia/Jakarta'); ?>
 <?= $this->extend('layouts/template') ?>
 
 <?= $this->section('content') ?>
@@ -26,13 +27,32 @@
                                 <th>Tanggal</th>
                                 <th>Jam Mulai</th>
                                 <th>Jam Selesai</th>
+                                <th>Keterangan</th>
                                 <th>Total Bayar</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php $no = 1; if (!empty($pemesanan)): ?>
+                            <?php $jamSekarang = date('H:i:s'); $tanggalSekarang = date('Y-m-d'); $no = 1; if (!empty($pemesanan)): ?>
                                 <?php foreach ($pemesanan as $p): ?>
+                                    <?php
+                                        if ($tanggalSekarang <= $p['tanggal_pesan']) {
+                                            // Jika ya, hapus dari array pemesanan
+                                            $ket = '<span class="badge bg-pending">belum dimulai</span>'; // Atau bisa diubah sesuai kebutuhan
+                                        }else if ($tanggalSekarang >= $p['tanggal_pesan']) {
+                                            // Jika jam selesai pemesanan sudah lewat, ubah statusnya
+                                            $ket = '<span class="badge bg-success">selesai</span>';
+                                        } else if ($p['jam_mulai'] > $jamSekarang) {
+                                            // Jika masih dalam waktu pemesanan, tetap gunakan status aslinya
+                                            $ket = '<span class="badge bg-success">selesai</span>';
+                                        } else if ($p['jam_mulai'] < $jamSekarang) {
+                                            // Jika masih dalam waktu pemesanan, tetap gunakan status aslinya
+                                            $ket = '<span class="badge bg-pending">belum dimulai</span>';;
+                                        }else {
+                                            // Jika tidak ada kondisi di atas, gunakan status aslinya
+                                            $ket = '<span class="badge bg-warning">sedang berlangsung</span>';;
+                                        }
+                                    ?>
                                     <tr>
                                         <td><?= $no++ ?></td>
                                         <td><?= esc($p['nama_pemesan']) ?></td>
@@ -40,6 +60,7 @@
                                         <td><?= date('d M Y', strtotime($p['tanggal_pesan'])) ?></td>
                                         <td><?= $p['jam_mulai'] ?></td>
                                         <td><?= $p['jam_selesai'] ?></td>
+                                        <td><?= $ket ?></td>
                                         <td>Rp<?= number_format($p['total_bayar'], 0, ',', '.') ?></td>
                                         <td>
                                             <span class="badge bg-<?= $p['status'] == 'pending' ? 'warning' : 'success' ?>">

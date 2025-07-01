@@ -8,13 +8,15 @@ class BookingApi extends BaseController
     public function cekJamKosong($tanggal)
     {
         $bookingModel = new \App\Models\PemesananModel();
+        $pengaturanModel = new \App\Models\PengaturanModel();
 
         // Ambil semua booking di tanggal tertentu
         $bookings = $bookingModel->getBookingByDate($tanggal);
+        $pengaturan = $pengaturanModel->first();
 
         // Waktu operasional lapangan
-        $jamBuka = '07:00:00';
-        $jamTutup = '22:00:00';
+        $jamBuka = $pengaturan['jam_buka'] ?? '08:00:00'; // Default jam buka
+        $jamTutup = $pengaturan['jam_tutup'] ?? '22:00:00'; // Default jam tutup
 
         // Buat semua slot 1 jam
         $semuaSlot = [];
