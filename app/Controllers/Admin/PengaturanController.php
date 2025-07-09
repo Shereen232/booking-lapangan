@@ -31,6 +31,15 @@ class PengaturanController extends BaseController
             'kontak_admin' => $this->request->getPost('kontak_admin')
         ];
 
+        $hariTutup = $this->request->getPost('hari_tutup');
+        $data = [
+            'jam_buka' => $this->request->getPost('jam_buka'),
+            'jam_tutup' => $this->request->getPost('jam_tutup'),
+            'durasi_minimal' => $this->request->getPost('durasi_minimal'),
+            'kontak_admin' => $this->request->getPost('kontak_admin'),
+            'hari_tutup' => is_array($hariTutup) ? implode(',', $hariTutup) : ''
+        ];
+
         $file = $this->request->getFile('foto_default');
         if ($file && $file->isValid() && !$file->hasMoved()) {
             $newName = $file->getRandomName();

@@ -14,6 +14,6 @@ class PengaturanModel extends Model
         'harga_per_jam',
         'durasi_minimal',
         'kontak_admin',
-        'foto_default'
+        'hari_tutup',
     ];
 }

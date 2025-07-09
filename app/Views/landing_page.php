@@ -13,7 +13,7 @@
         /* CSS kustom untuk styling */
         .hero-section {
             /* Menggunakan base_url() untuk memastikan path gambar benar */
-            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('<?= base_url('images/hero-bg.png') ?>') no-repeat center center/cover;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('<?= base_url('images/hero-bg.JPG') ?>') no-repeat center center/cover;
             color: white;
             padding: 100px 0;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
@@ -57,7 +57,7 @@
             <div class="row">
                 <div class="col-md-8 mx-auto">
                     <h1 class="display-3 fw-bold mb-4">Booking Lapangan Futsal Tanpa Ribet, Cuma di Get Futsal!</h1>
-                    <p class="lead mb-5">Temukan dan pesan lapangan futsal terbaik di kota Anda dalam hitungan detik. Cepat, mudah, dan terpercaya.</p>
+                    <p class="lead mb-5">Temukan dan pesan lapangan futsal terbaik di kota Batang dalam hitungan detik. Cepat, mudah, dan terpercaya.</p>
                     <div class="card p-4 shadow-lg bg-white bg-opacity-75">
                         <!-- Action form ini perlu disesuaikan dengan rute pencarian lapangan yang akan Anda buat -->
                         <form action="#" method="GET"> 
@@ -167,30 +167,6 @@
         </div>
     </section>
     
-    <!-- Cara Kerja Section -->
-    <section id="carapesan" class="py-5">
-        <div class="container text-center">
-            <h2 class="display-5 fw-bold mb-5">Cara Kerjanya Mudah!</h2>
-            <div class="row">
-                <div class="col-md-4 mb-4">
-                    <!-- Menggunakan base_url() untuk path ilustrasi -->
-                    
-                    <h5 class="fw-bold">1. Cari Lapangan</h5>
-                    <p>Temukan lapangan futsal impianmu berdasarkan lokasi, tanggal, dan waktu.</p>
-                </div>
-                <div class="col-md-4 mb-4">
-                    
-                    <h5 class="fw-bold">2. Pilih & Bayar</h5>
-                    <p>Pilih slot waktu yang tersedia, lalu lakukan pembayaran yang aman.</p>
-                </div>
-                <div class="col-md-4 mb-4">
-                    
-                    <h5 class="fw-bold">3. Mainkan!</h5>
-                    <p>Konfirmasi booking akan dikirim ke email. Lapangan siap digunakan!</p>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- CTA Akhir -->
     <section id="cta-akhir" class="py-5 bg-primary text-white text-center">

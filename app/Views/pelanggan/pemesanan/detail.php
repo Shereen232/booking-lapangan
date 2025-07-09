@@ -1,6 +1,30 @@
 <?= $this->extend('layouts/template') ?>
 <?= $this->section('content') ?>
 <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="<?= env('MIDTRANS_CLIENT_KEY') ?>"></script>
+
+<?php
+function konversiHari($englishDay) {
+    $days = [
+        'Sunday' => 'Minggu',
+        'Monday' => 'Senin',
+        'Tuesday' => 'Selasa',
+        'Wednesday' => 'Rabu',
+        'Thursday' => 'Kamis',
+        'Friday' => 'Jumat',
+        'Saturday' => 'Sabtu',
+    ];
+    return $days[$englishDay] ?? $englishDay;
+}
+
+function isHariTutup($hariTutupString) {
+    $hariSekarang = konversiHari(date('l'));
+    $daftarTutup = explode(',', $hariTutupString);
+    return in_array($hariSekarang, $daftarTutup);
+}
+
+$isTutup = isHariTutup($pengaturan['hari_tutup'] ?? '');
+?>
+
 <div class="card shadow p-4 mb-4">
     <div class="row">
         <div class="col-md-6 mb-3">
@@ -30,7 +54,13 @@
 
     <hr>
 
-    <form action="<?= base_url('pelanggan/pemesanan/simpan') ?>" method="POST" id="formBooking">
+    <?php if ($isTutup): ?>
+        <div class="alert alert-warning text-center fw-bold fs-5">
+            ⚠️ Maaf, hari ini kami <strong>tutup</strong>. Silakan lakukan pemesanan di hari lain.
+        </div>
+    <?php else: ?>
+        <form action="<?= base_url('pelanggan/pemesanan/simpan') ?>" method="POST" id="formBooking">
+
         <?= csrf_field() ?>
         <input type="hidden" name="lapangan_id" value="<?= $lapangan['id'] ?>">
 
@@ -87,7 +117,9 @@
         </div>
 
         <button type="submit" class="btn btn-primary w-100 py-2 fs-5">🛒 Pesan Sekarang</button>
-    </form>
+        </form>
+    <?php endif; ?>
+
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -147,6 +179,100 @@
             $('#jam_mulai').trigger('change');
         });
     }
+
+    function changeDateBooking(elem) {
+    let tanggal = $(elem).val();
+    $('#jam_mulai').empty();
+    $('#jam_selesai').empty();
+
+    // Cek apakah hari tutup
+    const hariTutup = <?= json_encode(array_map('trim', explode(',', $pengaturan['hari_tutup'] ?? ''))) ?>;
+    const hariIndo = new Intl.DateTimeFormat('id-ID', { weekday: 'long' }).format(new Date(tanggal));
+
+    if (hariTutup.includes(hariIndo.charAt(0).toUpperCase() + hariIndo.slice(1))) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Hari Tutup',
+            text: `Maaf, kami tutup setiap hari ${hariIndo}. Silakan pilih hari lain.`,
+        });
+
+        $('#jam_mulai').prop('disabled', true);
+        $('#jam_selesai').prop('disabled', true);
+        return;
+    } else {
+        $('#jam_mulai').prop('disabled', false);
+        $('#jam_selesai').prop('disabled', false);
+    }
+
+    $.get('/api/cekJamKosong/' + tanggal, function (res) {
+        slotList = res.available_slots;
+
+        slotList.forEach((slot, i) => {
+            let start = slot.split(' - ')[0].slice(0, 5);
+            $('#jam_mulai').append(`<option value="${start}" data-index="${i}">${start}</option>`);
+        });
+
+        $('#jam_mulai').trigger('change');
+    });
+    }
+
+    document.getElementById('formBooking').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const confirm = await Swal.fire({
+        title: 'Konfirmasi Pemesanan',
+        text: 'Apakah Anda yakin ingin melanjutkan pemesanan ini?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, pesan sekarang',
+        cancelButtonText: 'Batal'
+    });
+
+    if (!confirm.isConfirmed) {
+        return; // Batal submit
+    }
+
+    const form = e.target;
+    const formData = new FormData(form);
+
+    try {
+        const response = await fetch("<?= base_url('pelanggan/pemesanan/simpan') ?>", {
+            method: "POST",
+            body: formData,
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            const modalEl = document.getElementById('modalBooking');
+            const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+            modal.show();
+
+            window.snap.embed(result.snapToken, {
+                embedId: 'snap-container',
+                onSuccess: function (result) {
+                    // ... (lanjut seperti sebelumnya)
+                },
+                onPending: function (result) {
+                    Swal.fire('Menunggu Pembayaran', 'Silakan lanjutkan di Midtrans.', 'info');
+                },
+                onError: function (result) {
+                    Swal.fire('Gagal', 'Pembayaran gagal dilakukan.', 'error');
+                },
+                onClose: function () {
+                    Swal.fire('Ditutup', 'Anda menutup jendela pembayaran.', 'info');
+                }
+            });
+        } else {
+            Swal.fire('Gagal', result.message || 'Terjadi kesalahan saat memproses data.', 'error');
+        }
+    } catch (err) {
+        console.error('Error:', err);
+        Swal.fire('Gagal', 'Gagal mengirim data. Silakan coba lagi.', 'error');
+    }
+});
+
+
 </script>
 
 <script>

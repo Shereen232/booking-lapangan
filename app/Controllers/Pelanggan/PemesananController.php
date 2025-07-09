@@ -5,9 +5,11 @@ namespace App\Controllers\Pelanggan;
 use App\Controllers\BaseController;
 use App\Models\LapanganModel;
 use App\Models\PemesananModel;
+use App\Models\PengaturanModel;
 
 class PemesananController extends BaseController
 {
+    
     protected $lapanganModel;
 
     public function __construct()
@@ -22,6 +24,20 @@ class PemesananController extends BaseController
         return view('pelanggan/pemesanan/index', $data);
     }
 
+    private function konversiHari(string $englishDay): string
+    {
+        $map = [
+            'Sunday'    => 'Minggu',
+            'Monday'    => 'Senin',
+            'Tuesday'   => 'Selasa',
+            'Wednesday' => 'Rabu',
+            'Thursday'  => 'Kamis',
+            'Friday'    => 'Jumat',
+            'Saturday'  => 'Sabtu',
+        ];
+        return $map[$englishDay] ?? $englishDay;
+    }
+
     // Detail & form pemesanan
     public function detail($id)
     {
@@ -34,17 +50,24 @@ class PemesananController extends BaseController
         // Ambil tanggal dari query string atau gunakan hari ini
         $tanggal = $this->request->getGet('tanggal') ?? date('Y-m-d');
 
+        // Ambil data pengaturan
+        $pengaturanModel = new \App\Models\PengaturanModel();
+        $pengaturan = $pengaturanModel->first();
+
+        // Cek hari tutup
+        $hariTutup = explode(',', $pengaturan['hari_tutup'] ?? '');
+        $hariTanggal = $this->konversiHari(date('l', strtotime($tanggal)));
+        $isTutup = in_array($hariTanggal, $hariTutup);
+
+        // Ambil jadwal booking
         $pemesananModel = new \App\Models\PemesananModel();
         $jadwal_terbooking = $pemesananModel->where('lapangan_id', $id)
             ->where('tanggal_pesan', $tanggal)
             ->findAll();
 
-        // Hitung sisa slot dari pengaturan (misalnya per hari 10 jam)
-        $pengaturanModel = new \App\Models\PengaturanModel();
-        $pengaturan = $pengaturanModel->first();
+        // Hitung sisa slot
         $jam_operasional = strtotime($pengaturan['jam_tutup']) - strtotime($pengaturan['jam_buka']);
         $jumlah_slot = $jam_operasional / 3600; // Konversi ke jam
-
         $sisa_slot = $jumlah_slot - count($jadwal_terbooking);
 
         $data = [
@@ -52,10 +75,13 @@ class PemesananController extends BaseController
             'tanggal_pesan' => $tanggal,
             'jadwal_terbooking' => $jadwal_terbooking,
             'sisa_slot' => $sisa_slot,
+            'pengaturan' => $pengaturan,
+            'isTutup' => $isTutup
         ];
 
         return view('pelanggan/pemesanan/detail', $data);
     }
+
 
     // Simpan pemesanan
     public function simpan()
@@ -72,10 +98,23 @@ class PemesananController extends BaseController
             $catatan = $request->getPost('catatan');
 
             // ==== Simulasi session sementara ====
-            $userId = $session->get('user_id'); // anggap user login id 1
+            $userId = $session->get('user_id'); // anggap user login
             $namaPemesan = $session->get('nama');
 
-            // Ambil data harga per jam
+            // Ambil pengaturan dan cek hari tutup
+            $pengaturanModel = new \App\Models\PengaturanModel();
+            $pengaturan = $pengaturanModel->first();
+            $hariTutup = explode(',', $pengaturan['hari_tutup'] ?? '');
+            $hariTanggal = $this->konversiHari(date('l', strtotime($tanggal)));
+            
+            if (in_array($hariTanggal, $hariTutup)) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Maaf, pemesanan tidak tersedia karena hari tersebut adalah hari tutup.'
+                ]);
+            }
+
+            // Ambil data lapangan
             $lapanganModel = new \App\Models\LapanganModel();
             $lapangan = $lapanganModel->find($lapanganId);
             if (!$lapangan) {
@@ -90,7 +129,6 @@ class PemesananController extends BaseController
 
             $total = $durasi * $lapangan['harga_per_jam'];
             $total += $jumlahAir * 5000;
-
             foreach ($biayaTambahan as $biaya) {
                 $total += (int)$biaya;
             }
@@ -110,10 +148,10 @@ class PemesananController extends BaseController
                 'jumlah_air'    => $jumlahAir,
                 'catatan'       => $catatan,
                 'total_bayar'   => $total,
-                'status'        => 'pending' // default status
+                'status'        => 'pending'
             ]);
 
-            // Konfigurasi Midtrans
+            // Midtrans
             \Midtrans\Config::$serverKey = env('MIDTRANS_SERVER_KEY');
             \Midtrans\Config::$isProduction = false;
             \Midtrans\Config::$isSanitized = true;
@@ -134,26 +172,25 @@ class PemesananController extends BaseController
             $snapToken = \Midtrans\Snap::getSnapToken($params);
 
             $id = $pemesananModel->getInsertID();
+            $pemesananModel->update($id, ['snaptoken' => $snapToken]);
 
-            $pemesananModel->update($id, [
-                'snaptoken' => $snapToken
-            ]);            
-
-            return response()->setJSON([
+            return $this->response->setJSON([
                 'success' => true,
-                'message' => 'Pemesanan berhasil, silakan melakukan pembayaran.',
+                'message' => 'Pemesanan berhasil.',
                 'total' => $total,
                 'snapToken' => $snapToken
             ]);
-        } catch (\Exception $e) {
-            log_message('error', 'Gagal melakukan pemesanan: ' . $e->getMessage());
 
-            return response()->setJSON([
+        } catch (\Exception $e) {
+            log_message('error', 'Gagal simpan pemesanan: ' . $e->getMessage());
+
+            return $this->response->setJSON([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat memproses pemesanan: ' . $e->getMessage()
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
             ])->setStatusCode(500);
         }
     }
+
 
     public function updateStatus()
     {
@@ -184,5 +221,7 @@ class PemesananController extends BaseController
 
         return redirect()->to(base_url('pelanggan/pembayaran'))->with('success', 'Berhasil.');
     }
+
+    
 
 }

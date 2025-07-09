@@ -39,6 +39,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin','filter' => 'aut
     // Kelola Pemesanan
     $routes->group('pemesanan', function($routes) {
         $routes->get('/', 'PemesananController::index');
+        $routes->get('exportPdf', 'PemesananController::exportPdf');
         $routes->get('edit/(:num)', 'PemesananController::edit/$1');
         $routes->post('update/(:num)', 'PemesananController::update/$1');
         $routes->get('delete/(:num)', 'PemesananController::delete/$1');

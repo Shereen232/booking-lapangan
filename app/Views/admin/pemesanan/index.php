@@ -5,13 +5,16 @@
 <div class="row">
     <div class="col-sm-12">
         <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
+           <div class="card-header d-flex justify-content-between align-items-left">
                 <h5>Data Pemesanan </h5>
-                <form method="get" action="<?= current_url() ?>" class="d-flex">
-                    <input type="date" name="tanggalMulai" id="tanggalMulai" class="form-control me-2" value="<?= esc($tanggalMulai) ?>">
-                    <input type="date" name="tanggalSelesai" id="tanggalSelesai" class="form-control me-2" value="<?= esc($tanggalSelesai) ?>">
-                    <button type="submit" class="btn btn-primary">Filter</button>
-                </form>
+                <br>
+                <div class="d-flex align-items-left"> <form method="get" action="<?= current_url() ?>" class="d-flex me-3"> <input type="date" name="tanggalMulai" id="tanggalMulai" class="form-control me-2" value="<?= esc($tanggalMulai) ?>">
+                        <input type="date" name="tanggalSelesai" id="tanggalSelesai" class="form-control me-2" value="<?= esc($tanggalSelesai) ?>">
+                        <button type="submit" class="btn btn-primary">Filter</button>
+                    </form>
+
+                    <a href="<?= site_url('admin/pemesanan/exportPdf') ?>?tanggalMulai=<?= esc($tanggalMulai) ?>&tanggalSelesai=<?= esc($tanggalSelesai) ?>" class="btn btn-danger" target="_blank">Export PDF</a>
+                </div>
             </div>
             <div class="card-body">
                 <?php if (!empty($tanggalFilter)): ?>

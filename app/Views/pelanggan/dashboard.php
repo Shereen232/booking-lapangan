@@ -9,7 +9,7 @@
       <a href="<?= base_url('pelanggan/pemesanan') ?>" class="text-decoration-none">
         <div class="card text-center shadow-sm h-100">
           <div class="card-body">
-            <i class="ti ti-building-stadium fs-1 text-primary mb-2"></i>
+            <i class="ti ti ti-soccer-field fs-1 text-primary mb-2"></i>
             <h5 class="card-title">Booking Lapangan</h5>
             <p class="card-text">Lihat dan pesan jadwal bermainmu di sini.</p>
           </div>
@@ -45,7 +45,7 @@
       <a href="<?= base_url('pelanggan/akun') ?>" class="text-decoration-none">
         <div class="card text-center shadow-sm h-100">
           <div class="card-body">
-            <i class="ti ti-user-circle fs-1 text-info mb-2"></i>
+            <i class="ti ti ti-user fs-1 text-info mb-2"></i>
             <h5 class="card-title">Akun Saya</h5>
             <p class="card-text">Kelola informasi akunmu di sini.</p>
           </div>

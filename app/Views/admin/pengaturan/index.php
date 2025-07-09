@@ -31,13 +31,22 @@
         </div>
 
         <div class="mb-3">
-          <label for="foto_default" class="form-label">Foto Default Lapangan</label>
-          <?php if (!empty($pengaturan['foto_default'])) : ?>
-            <div class="mb-2">
-              <img src="<?= base_url('uploads/pengaturan/' . $pengaturan['foto_default']) ?>" alt="Foto Default" class="img-thumbnail" width="200">
-            </div>
-          <?php endif; ?>
-          <input type="file" class="form-control" id="foto_default" name="foto_default" accept="image/*">
+          <label class="form-label">Hari Tutup</label><br>
+          <?php
+            $hariList = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+            $hariTutup = explode(',', $pengaturan['hari_tutup'] ?? '');
+          ?>
+          <div class="row">
+            <?php foreach ($hariList as $hari): ?>
+              <div class="col-md-4">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="hari_tutup[]" value="<?= $hari ?>" id="hari_<?= $hari ?>"
+                    <?= in_array($hari, $hariTutup) ? 'checked' : '' ?>>
+                  <label class="form-check-label" for="hari_<?= $hari ?>"><?= $hari ?></label>
+                </div>
+              </div>
+            <?php endforeach; ?>
+          </div>
         </div>
 
         <button type="submit" class="btn btn-primary">Simpan Pengaturan</button>
