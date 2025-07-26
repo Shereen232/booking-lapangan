@@ -24,7 +24,7 @@
           <div class="card shadow-lg rounded-4">
             <div class="card-body px-4 py-5">
               <div class="text-center mb-4">
-                <img src="<?= base_url('assets/images/logo2.JPG') ?>" alt="Logo" class="mb-3" style="height: 250px;">
+                <img src="<?= base_url('logo_cutout.png') ?>" alt="Logo" class="mb-3" style="height: 250px;">
                 <h3 class="fw-bold">Selamat Datang Kembali</h3>
                 <p class="text-muted small">Silakan login untuk melanjutkan</p>
               </div>

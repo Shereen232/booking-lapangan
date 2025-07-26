@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Laporan Data Pemesanan</title>
+    <title>Laporan Data Pemesanan Get Futsal</title>
     <style>
         /* Gaya Dasar */
         body {
@@ -77,7 +77,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>Laporan Data Pemesanan Lapangan</h1>
+        <h1>Laporan Data Pemesanan Lapangan Get Futsal</h1>
         <?php if (!empty($tanggalMulai) && !empty($tanggalSelesai)): ?>
             <p>Periode: **<?= date('d M Y', strtotime($tanggalMulai)) ?>** sampai **<?= date('d M Y', strtotime($tanggalSelesai)) ?>**</p>
         <?php else: ?>

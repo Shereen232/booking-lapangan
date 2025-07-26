@@ -185,7 +185,6 @@ $isTutup = isHariTutup($pengaturan['hari_tutup'] ?? '');
     $('#jam_mulai').empty();
     $('#jam_selesai').empty();
 
-    // Cek apakah hari tutup
     const hariTutup = <?= json_encode(array_map('trim', explode(',', $pengaturan['hari_tutup'] ?? ''))) ?>;
     const hariIndo = new Intl.DateTimeFormat('id-ID', { weekday: 'long' }).format(new Date(tanggal));
 
@@ -207,14 +206,28 @@ $isTutup = isHariTutup($pengaturan['hari_tutup'] ?? '');
     $.get('/api/cekJamKosong/' + tanggal, function (res) {
         slotList = res.available_slots;
 
+        const now = new Date();
+        const today = new Date().toISOString().slice(0, 10);
+        const isToday = tanggal === today;
+
         slotList.forEach((slot, i) => {
-            let start = slot.split(' - ')[0].slice(0, 5);
+            let start = slot.split(' - ')[0].slice(0, 5); // HH:mm
+
+            if (isToday) {
+                let [h, m] = start.split(':');
+                let slotTime = new Date();
+                slotTime.setHours(parseInt(h), parseInt(m), 0);
+
+                if (slotTime <= now) return; // Skip slot yang sudah lewat
+            }
+
             $('#jam_mulai').append(`<option value="${start}" data-index="${i}">${start}</option>`);
         });
 
         $('#jam_mulai').trigger('change');
     });
-    }
+}
+
 
     document.getElementById('formBooking').addEventListener('submit', async function (e) {
     e.preventDefault();
@@ -276,84 +289,7 @@ $isTutup = isHariTutup($pengaturan['hari_tutup'] ?? '');
 </script>
 
 <script>
-    document.getElementById('formBooking').addEventListener('submit', async function (e) {
-        e.preventDefault();
-
-        const form = e.target;
-        const formData = new FormData(form);
-
-        try {
-            const response = await fetch("<?= base_url('pelanggan/pemesanan/simpan') ?>", {
-                method: "POST",
-                body: formData,
-            });
-
-            const result = await response.json();
-
-            console.log(result);
-            
-
-            if (result.success) {
-                const modalEl = document.getElementById('modalBooking');
-                const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
-                modal.show();
-                // Trigger snap popup. @TODO: Replace TRANSACTION_TOKEN_HERE with your transaction token.
-                // Also, use the embedId that you defined in the div above, here.
-                window.snap.embed(result.snapToken, {
-                    embedId: 'snap-container',
-                    onSuccess: function (result) {
-                        // Kirim ke server untuk update status
-                        fetch("<?= base_url('api/pemesanan/update-status') ?>", {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                                "X-CSRF-TOKEN": "<?= csrf_hash() ?>"
-                            },
-                            body: JSON.stringify({
-                                order_id: result.order_id,
-                                transaction_status: result.transaction_status,
-                                payment_type: result.payment_type,
-                                gross_amount: result.gross_amount
-                            })
-                        })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error("Gagal mengupdate status di server");
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            console.log("Status pembayaran diperbarui:", data);
-                            modal.hide();
-                            // Redirect atau tampilkan modal sukses, dll
-                            
-                        })
-                        .catch(error => {
-                            console.error("Error:", error);
-                            alert("Terjadi kesalahan saat mengupdate status ke server.");
-                        });
-                    },
-                    onPending: function (result) {
-                        /* You may add your own implementation here */
-                        alert("wating your payment!"); console.log(result);
-                    },
-                    onError: function (result) {
-                        /* You may add your own implementation here */
-                        alert("payment failed!"); console.log(result);
-                    },
-                    onClose: function () {
-                        /* You may add your own implementation here */
-                        alert('you closed the popup without finishing the payment');
-                    }
-                });
-            } else {
-                alert(result.message || 'Terjadi kesalahan saat memproses data.');
-            }
-        } catch (err) {
-            console.error('Error:', err);
-            alert('Gagal mengirim data. Silakan coba lagi.');
-        }
-    });
+   
     const hargaPerJam = <?= $lapangan['harga_per_jam'] ?>;
 
     function hitungTotal() {
