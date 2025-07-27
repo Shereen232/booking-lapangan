@@ -1,3 +1,15 @@
+<?php
+// Ambil path fisik file logo
+$path = FCPATH . 'logo_cutout.png';
+
+if (file_exists($path)) {
+    $type = pathinfo($path, PATHINFO_EXTENSION);
+    $data = file_get_contents($path);
+    $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+} else {
+    $base64 = '';
+}
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -85,15 +97,21 @@
 </head>
 <body>
 
-<div class="header">
-<img src="<?= base_url('logo_cutout.svg') ?>" alt="Logo" class="mb-3" style="height: 250px;">
-
-
-    <div>
-        <div class="header-title">Laporan Data Pemesanan Lapangan Get Futsal</div>
-        <div class="periode">Periode: <strong><?= date('d M Y', strtotime($tanggalMulai)) ?></strong> sampai <strong><?= date('d M Y', strtotime($tanggalSelesai)) ?></strong></div>
-    </div>
-</div>
+<table width="100%" style="margin-bottom: 20px;">
+  <tr>
+    <td width="10%" align="left">
+      <img src="<?= $base64 ?>" alt="Logo" style="height: 70px;">
+    </td>
+    <td align="center">
+      <h1 style="margin: 0; font-size: 16pt;">Laporan Data Pembayaran Lapangan Get Futsal</h1>
+      <?php if (!empty($tanggalMulai) && !empty($tanggalSelesai)): ?>
+          <p style="margin: 4px 0 0; font-size: 10pt;">Periode: <?= date('d M Y', strtotime($tanggalMulai)) ?> sampai <?= date('d M Y', strtotime($tanggalSelesai)) ?></p>
+      <?php else: ?>
+          <p style="margin: 4px 0 0; font-size: 10pt;">Seluruh Data Pembayaran</p>
+      <?php endif; ?>
+    </td>
+  </tr>
+</table>
 
 <table>
     <thead>

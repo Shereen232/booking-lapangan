@@ -3,7 +3,7 @@
 <?= $this->section('content') ?>
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <h5>Data Pemesanan</h5>
+        <h5>Data Pambayaran Booking Lapangan</h5>
     </div>
     <div class="card-body">
         <form action="<?= current_url() ?>" method="GET" class="mb-4">
