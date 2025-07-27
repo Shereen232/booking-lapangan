@@ -84,15 +84,42 @@
           </li>
         <?php endif; ?>
 
+        
         <!-- Menu Logout (untuk semua role) -->
-        <li class="pc-item">
-          <a href="<?= base_url('logout') ?>" class="pc-link">
-            <span class="pc-micon"><i class="ti ti-logout"></i></span>
-            <span class="pc-mtext">Logout</span>
-          </a>
-        </li>
+          <li class="pc-item">
+            <a href=""<?= base_url('logout') ?>"" id="logoutBtn" class="pc-link">
+              <span class="pc-micon"><i class="ti ti-logout"></i></span>
+              <span class="pc-mtext">Logout</span>
+            </a>
+          </li>
+
+
 
       </ul>
     </div>
   </div>
 </nav>
+
+<!-- Tambahkan SweetAlert -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+  document.getElementById('logoutBtn').addEventListener('click', function (e) {
+    e.preventDefault();
+    Swal.fire({
+      title: 'Keluar?',
+      text: "Apakah Anda yakin ingin logout?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Ya, Logout',
+      cancelButtonText: 'Batal'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = "<?= base_url('logout') ?>";
+      }
+    });
+  });
+</script>
+

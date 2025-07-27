@@ -62,6 +62,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin','filter' => 'aut
     // Pembayaran
     $routes->group('pembayaran', function ($routes) {
         $routes->get('/', 'PembayaranController::index');
+        $routes->get('exportPdf', 'PembayaranController::exportPdf');
     });
 
 });

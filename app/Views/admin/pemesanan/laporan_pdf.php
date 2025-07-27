@@ -12,8 +12,24 @@
 
         /* Header Laporan */
         .header {
-            text-align: center;
+            display: flex; /* Menggunakan flexbox untuk penataan elemen */
+            align-items: center; /* Pusatkan item secara vertikal */
+            justify-content: center; /* Pusatkan konten secara horizontal */
             margin-bottom: 30px;
+            position: relative; /* Diperlukan untuk penempatan logo absolut jika diinginkan */
+        }
+        .header .logo {
+            position: absolute; /* Posisikan logo secara absolut */
+            left: 0; /* Posisikan di paling kiri */
+            top: 50%; /* Pusatkan secara vertikal */
+            transform: translateY(-50%); /* Penyesuaian vertikal */
+            height: 80px; /* Sesuaikan tinggi logo sesuai kebutuhan */
+            width: auto; /* Biarkan lebar menyesuaikan proporsi */
+            margin-right: 20px; /* Jarak antara logo dan teks header */
+        }
+        .header .header-content {
+            text-align: center; /* Pusatkan teks di dalam header-content */
+            flex-grow: 1; /* Biarkan konten header mengambil ruang yang tersedia */
         }
         .header h1 {
             margin: 0;
@@ -77,12 +93,15 @@
 </head>
 <body>
     <div class="header">
-        <h1>Laporan Data Pemesanan Lapangan Get Futsal</h1>
-        <?php if (!empty($tanggalMulai) && !empty($tanggalSelesai)): ?>
-            <p>Periode: **<?= date('d M Y', strtotime($tanggalMulai)) ?>** sampai **<?= date('d M Y', strtotime($tanggalSelesai)) ?>**</p>
-        <?php else: ?>
-            <p>Seluruh Data Pemesanan</p>
-        <?php endif; ?>
+        <img src=<?= base_url('logo_cutout.png') ?>" alt="Logo Get Futsal" class="logo">
+        <div class="header-content">
+            <h1>Laporan Data Pemesanan Lapangan Get Futsal</h1>
+            <?php if (!empty($tanggalMulai) && !empty($tanggalSelesai)): ?>
+                <p>Periode: **<?= date('d M Y', strtotime($tanggalMulai)) ?>** sampai **<?= date('d M Y', strtotime($tanggalSelesai)) ?>**</p>
+            <?php else: ?>
+                <p>Seluruh Data Pemesanan</p>
+            <?php endif; ?>
+        </div>
     </div>
 
     <table>

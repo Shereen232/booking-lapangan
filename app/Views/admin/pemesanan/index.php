@@ -5,21 +5,47 @@
 <div class="row">
     <div class="col-sm-12">
         <div class="card">
-           <div class="card-header d-flex justify-content-between align-items-left">
-                <h5>Data Pemesanan </h5>
-                <br>
-                <div class="d-flex align-items-left"> <form method="get" action="<?= current_url() ?>" class="d-flex me-3"> <input type="date" name="tanggalMulai" id="tanggalMulai" class="form-control me-2" value="<?= esc($tanggalMulai) ?>">
-                        <input type="date" name="tanggalSelesai" id="tanggalSelesai" class="form-control me-2" value="<?= esc($tanggalSelesai) ?>">
-                        <button type="submit" class="btn btn-primary">Filter</button>
-                    </form>
-
-                    <a href="<?= site_url('admin/pemesanan/exportPdf') ?>?tanggalMulai=<?= esc($tanggalMulai) ?>&tanggalSelesai=<?= esc($tanggalSelesai) ?>" class="btn btn-danger" target="_blank">Export PDF</a>
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0">Data Pemesanan</h5>
+                    
                 </div>
+
+                <form method="get" action="<?= current_url() ?>">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-auto">
+                            <label for="tanggalMulai" class="form-label mb-0">Dari Tanggal:</label>
+                            <input type="date" name="tanggalMulai" id="tanggalMulai" class="form-control form-control-sm" value="<?= esc($tanggalMulai) ?>">
+                        </div>
+                        <div class="col-md-auto">
+                            <label for="tanggalSelesai" class="form-label mb-0">Sampai Tanggal:</label>
+                            <input type="date" name="tanggalSelesai" id="tanggalSelesai" class="form-control form-control-sm" value="<?= esc($tanggalSelesai) ?>">
+                        </div>
+                        <div class="col-md-auto">
+                            <button type="submit" class="btn btn-primary btn-sm mt-3 mt-md-0">Filter</button>
+                            <?php if (!empty($tanggalMulai) || !empty($tanggalSelesai)) : ?>
+                                <a href="<?= current_url() ?>" class="btn btn-secondary btn-sm mt-3 mt-md-0 ms-2">Reset</a>
+                            <?php endif; ?>
+                        </div>
+                        <div class="col-md-auto">
+                            <a href="<?= site_url('admin/pemesanan/exportPdf') ?>?tanggalMulai=<?= esc($tanggalMulai) ?>&tanggalSelesai=<?= esc($tanggalSelesai) ?>" class="btn btn-danger btn-sm" target="_blank">
+                            <i class="fas fa-file-pdf me-1"></i> Ekspor PDF
+                            </a>
+                        </div>
+                    </div>
+                </form>
             </div>
             <div class="card-body">
-                <?php if (!empty($tanggalFilter)): ?>
-                    <p>Data pemesanan tanggal: <strong><?= date('d M Y', strtotime($tanggalFilter)) ?></strong></p>
+                <?php if (!empty($tanggalMulai) && !empty($tanggalSelesai)): ?>
+                    <p>Data pemesanan periode: <strong><?= date('d M Y', strtotime($tanggalMulai)) ?></strong> sampai <strong><?= date('d M Y', strtotime($tanggalSelesai)) ?></strong></p>
+                <?php elseif (!empty($tanggalMulai)): ?>
+                    <p>Data pemesanan dari tanggal: <strong><?= date('d M Y', strtotime($tanggalMulai)) ?></strong></p>
+                <?php elseif (!empty($tanggalSelesai)): ?>
+                    <p>Data pemesanan sampai tanggal: <strong><?= date('d M Y', strtotime($tanggalSelesai)) ?></strong></p>
+                <?php else: ?>
+                    <p>Menampilkan semua data pemesanan.</p>
                 <?php endif; ?>
+
                 <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>
@@ -36,24 +62,33 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <?php $jamSekarang = date('H:i:s'); $tanggalSekarang = date('Y-m-d'); $no = 1; if (!empty($pemesanan)): ?>
+                            <?php
+                            $jamSekarang = date('H:i:s');
+                            $tanggalSekarang = date('Y-m-d');
+                            $no = 1;
+                            if (!empty($pemesanan)): ?>
                                 <?php foreach ($pemesanan as $p): ?>
                                     <?php
-                                        if ($tanggalSekarang <= $p['tanggal_pesan']) {
-                                            // Jika ya, hapus dari array pemesanan
-                                            $ket = '<span class="badge bg-pending">belum dimulai</span>'; // Atau bisa diubah sesuai kebutuhan
-                                        }else if ($tanggalSekarang >= $p['tanggal_pesan']) {
-                                            // Jika jam selesai pemesanan sudah lewat, ubah statusnya
-                                            $ket = '<span class="badge bg-success">selesai</span>';
-                                        } else if ($p['jam_mulai'] > $jamSekarang) {
-                                            // Jika masih dalam waktu pemesanan, tetap gunakan status aslinya
-                                            $ket = '<span class="badge bg-success">selesai</span>';
-                                        } else if ($p['jam_mulai'] < $jamSekarang) {
-                                            // Jika masih dalam waktu pemesanan, tetap gunakan status aslinya
-                                            $ket = '<span class="badge bg-pending">belum dimulai</span>';;
-                                        }else {
-                                            // Jika tidak ada kondisi di atas, gunakan status aslinya
-                                            $ket = '<span class="badge bg-warning">sedang berlangsung</span>';;
+                                        $ket = '';
+                                        $ket_badge_class = '';
+
+                                        if ($tanggalSekarang < $p['tanggal_pesan']) {
+                                            $ket = 'belum dimulai';
+                                            $ket_badge_class = 'bg-secondary'; // Changed to secondary for 'belum dimulai'
+                                        } else if ($tanggalSekarang > $p['tanggal_pesan']) {
+                                            $ket = 'selesai';
+                                            $ket_badge_class = 'bg-success';
+                                        } else { // Tanggalnya sama
+                                            if ($jamSekarang < $p['jam_mulai']) {
+                                                $ket = 'belum dimulai';
+                                                $ket_badge_class = 'bg-secondary';
+                                            } elseif ($jamSekarang >= $p['jam_mulai'] && $jamSekarang < $p['jam_selesai']) {
+                                                $ket = 'sedang berlangsung';
+                                                $ket_badge_class = 'bg-info';
+                                            } else {
+                                                $ket = 'selesai';
+                                                $ket_badge_class = 'bg-success';
+                                            }
                                         }
                                     ?>
                                     <tr>
@@ -63,7 +98,7 @@
                                         <td><?= date('d M Y', strtotime($p['tanggal_pesan'])) ?></td>
                                         <td><?= $p['jam_mulai'] ?></td>
                                         <td><?= $p['jam_selesai'] ?></td>
-                                        <td><?= $ket ?></td>
+                                        <td><span class="badge <?= $ket_badge_class ?>"><?= $ket ?></span></td>
                                         <td>Rp<?= number_format($p['total_bayar'], 0, ',', '.') ?></td>
                                         <td>
                                             <span class="badge bg-<?= $p['status'] == 'pending' ? 'warning' : 'success' ?>">
@@ -74,7 +109,7 @@
                                 <?php endforeach ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="8" class="text-center">Tidak ada data pemesanan untuk tanggal ini.</td>
+                                    <td colspan="9" class="text-center">Tidak ada data pemesanan untuk periode ini.</td>
                                 </tr>
                             <?php endif; ?>
                         </tbody>
