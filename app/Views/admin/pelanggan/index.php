@@ -26,7 +26,11 @@
                         <td><?= esc($row['alamat']) ?></td>
                         <td>
                             <a href="<?= base_url('admin/pelanggan/edit/' . $row['id']) ?>" class="btn btn-sm btn-warning">Edit</a>
-                            <a href="<?= base_url('admin/pelanggan/delete/' . $row['id']) ?>" class="btn btn-sm btn-danger" onclick="return confirm('Yakin ingin menghapus pelanggan ini?')">Hapus</a>
+                            <form id="delete-form-<?= $row['id'] ?>" action="<?= base_url('admin/pelanggan/delete/' . $row['id']) ?>" method="post" class="d-inline">
+                                <?= csrf_field() ?>
+                                <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete(<?= $row['id'] ?>)">Hapus</button>
+                            </form>
+
                         </td>
                     </tr>
                 <?php endforeach ?>
@@ -38,5 +42,25 @@
         </tbody>
     </table>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  function confirmDelete(id) {
+    Swal.fire({
+      title: 'Yakin ingin menghapus?',
+      text: "Data pelanggan akan dihapus permanen!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: 'Ya, hapus!',
+      cancelButtonText: 'Batal'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        document.getElementById('delete-form-' + id).submit();
+      }
+    });
+  }
+</script>
 
 <?= $this->endSection() ?>

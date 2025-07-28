@@ -4,9 +4,18 @@ namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
 use App\Models\UserModel;
+use App\Models\PemesananModel;
 
 class PelangganController extends BaseController
 {
+    protected $pemesananModel;
+    protected $userModel;
+
+    public function __construct()
+    {
+        $this->pemesananModel = new PemesananModel();
+        $this->userModel = new UserModel();
+    }
     public function index()
     {
         $userModel = new UserModel();
@@ -54,9 +63,15 @@ class PelangganController extends BaseController
 
     public function delete($id)
     {
-        $userModel = new UserModel();
-        $userModel->delete($id);
+        // Hapus semua pemesanan milik user
+        $this->pemesananModel->where('user_id', $id)->delete();
 
-        return redirect()->to('/admin/pelanggan')->with('success', 'Data pelanggan berhasil dihapus.');
+        // Baru hapus user
+        $this->userModel->delete($id);
+
+        session()->setFlashdata('success', 'Pelanggan dan semua pesanannya berhasil dihapus.');
+        return redirect()->to(base_url('admin/pelanggan'));
     }
+
+
 }

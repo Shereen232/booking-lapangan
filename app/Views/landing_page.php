@@ -43,11 +43,10 @@
             <nav class="d-none d-md-block">
                 <a href="#home" class="text-decoration-none text-dark mx-3">Beranda</a>
                 <a href="#lapangan" class="text-decoration-none text-dark mx-3">Lapangan</a>
-                <a href="#carapesan" class="text-decoration-none text-dark mx-3">Cara Pesan</a>
                 <a href="#kontak" class="text-decoration-none text-dark mx-3">Kontak</a>
             </nav>
             <!-- Mengarahkan ke halaman login -->
-            <a href="<?= base_url('login') ?>" class="btn btn-primary cta-button">Pesan Sekarang</a>
+            <a href="<?= base_url('login') ?>" class="btn btn-primary cta-button">LOGIN</a>
         </div>
     </header>
 
@@ -193,13 +192,6 @@
                         <li><i class="bi bi-telephone-fill me-2"></i>0852-9372-4983</li>
                         <li><i class="bi bi-geo-alt-fill me-2"></i>Jl. Raya Tegalsari, Tegalsari, Kandeman, Kab.Batang</li>
                     </ul>
-                </div>
-                <div class="col-md-4 mb-4">
-                    <h5 class="fw-bold">Ikuti Kami</h5>
-                    <!-- Ganti dengan ikon media sosial yang sesuai -->
-                    <a href="@get_futsal" class="text-white me-3"><i class="bi bi-instagram fs-4"></i></a>
-                    <a href="#" class="text-white me-3"><i class="bi bi-facebook fs-4"></i></a>
-                    
                 </div>
             </div>
             <hr class="my-4 border-secondary">

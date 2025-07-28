@@ -7,7 +7,7 @@
   </div>
 
   <div class="card-body">
-    <form action="<?= base_url('admin/lapangan/store') ?>" method="post" enctype="multipart/form-data">
+    <form id="formLapangan" action="<?= base_url('admin/lapangan/store') ?>" method="post" enctype="multipart/form-data">
       <?= csrf_field() ?>
 
       <div class="mb-3">
@@ -35,12 +35,44 @@
         <a href="<?= base_url('admin/lapangan') ?>" class="btn btn-secondary">
           <i class="ti ti-arrow-left"></i> Kembali
         </a>
-        <button type="submit" class="btn btn-success">
+        <button type="button" class="btn btn-success" id="btnSimpan">
           <i class="ti ti-device-floppy"></i> Simpan Data
         </button>
       </div>
     </form>
   </div>
 </div>
+
+<?php if (session()->getFlashdata('success')): ?>
+<script>
+  Swal.fire({
+    icon: 'success',
+    title: 'Sukses!',
+    text: '<?= session()->getFlashdata('success') ?>',
+    confirmButtonColor: '#3085d6'
+  });
+</script>
+<?php endif; ?>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.getElementById('btnSimpan').addEventListener('click', function (e) {
+  Swal.fire({
+    title: 'Simpan Data?',
+    text: "Pastikan semua data sudah benar.",
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonColor: '#198754', // Bootstrap success
+    cancelButtonColor: '#6c757d', // Bootstrap secondary
+    confirmButtonText: 'Ya, Simpan',
+    cancelButtonText: 'Batal'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      document.getElementById('formLapangan').submit();
+    }
+  });
+});
+</script>
+
 
 <?= $this->endSection() ?>

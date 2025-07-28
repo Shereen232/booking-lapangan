@@ -42,7 +42,9 @@ class LapanganController extends BaseController
             'foto' => $namaFoto
         ]);
 
-        return redirect()->to(base_url('admin/lapangan'))->with('success', 'Data lapangan berhasil ditambahkan.');
+        session()->setFlashdata('success', 'Data lapangan berhasil ditambahkan.');
+        return redirect()->to(base_url('admin/lapangan'));
+
     }
 
     public function edit($id)

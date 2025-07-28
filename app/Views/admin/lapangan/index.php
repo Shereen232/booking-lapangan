@@ -13,12 +13,12 @@
     <table class="table table-bordered table-striped">
       <thead class="table-dark">
         <tr>
-          <th>No</th>
-          <th>Nama Lapangan</th>
-          <th>Deskripsi</th>
-          <th>Foto</th>
-          <th>Harga per Jam</th> 
-          <th>Aksi</th>
+          <th style="width: 5%">No</th>
+    <th style="width: 20%">Nama Lapangan</th>
+    <th style="width: 30%">Deskripsi</th>
+    <th style="width: 25%">Foto</th>
+    <th style="width: 10%">Harga per Jam</th>
+    <th style="width: 10%">Aksi</th>
         </tr>
       </thead>
       <tbody>
@@ -37,9 +37,9 @@
             <td>Rp <?= number_format($l['harga_per_jam'], 0, ',', '.') ?></td> 
             <td>
               <a href="<?= base_url('admin/lapangan/edit/' . $l['id']) ?>" class="btn btn-warning btn-sm">Edit</a>
-              <form action="<?= base_url('admin/lapangan/delete/' . $l['id']) ?>" method="post" class="d-inline" onsubmit="return confirm('Yakin hapus data?')">
+              <form id="delete-form-<?= $l['id'] ?>" action="<?= base_url('admin/lapangan/delete/' . $l['id']) ?>" method="post" class="d-inline">
                 <?= csrf_field() ?>
-                <button class="btn btn-danger btn-sm" type="submit">Hapus</button>
+                <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete(<?= $l['id'] ?>)">Hapus</button>
               </form>
             </td>
           </tr>
@@ -48,5 +48,25 @@
     </table>
   </div>
 </div>
+
+<script>
+  function confirmDelete(id) {
+    Swal.fire({
+      title: 'Yakin ingin menghapus?',
+      text: "Data yang dihapus tidak bisa dikembalikan!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: 'Ya, hapus!',
+      cancelButtonText: 'Batal'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        document.getElementById('delete-form-' + id).submit();
+      }
+    });
+  }
+</script>
+
 
 <?= $this->endSection() ?>

@@ -30,7 +30,7 @@ if (file_exists($path)) {
             margin-bottom: 20px;
         }
 
-        .logo {
+        .logo { 
             width: 60px;
             height: auto;
             margin-right: 15px;

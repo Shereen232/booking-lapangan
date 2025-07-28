@@ -25,7 +25,7 @@
             <div class="card-body px-4 py-5">
               <div class="text-center mb-4">
                 <img src="<?= base_url('logo_cutout.png') ?>" alt="Logo" class="mb-3" style="height: 250px;">
-                <h3 class="fw-bold">Selamat Datang Kembali</h3>
+                <h3 class="fw-bold">Selamat Datang</h3>
                 <p class="text-muted small">Silakan login untuk melanjutkan</p>
               </div>
 
@@ -48,6 +48,10 @@
 
                 <div class="d-grid">
                   <button type="submit" class="btn btn-primary btn-lg">Login</button>
+                </div>
+
+                <div class="d-grid mt-3">
+                  <a href="<?= base_url('/') ?>" class="btn btn-outline-secondary btn-lg">← Kembali ke Beranda</a>
                 </div>
               </form>
 
