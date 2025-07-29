@@ -37,7 +37,7 @@ class PembayaranController extends BaseController
 
 
         $data = [
-            'pemesanan' => $query->findAll(),
+            'pemesanan' => $query->orderBy('pemesanan.tanggal_pesan', 'desc')->findAll(),
             'tanggalMulai' => $tanggalMulai,
             'tanggalSelesai' => $tanggalSelesai,
         ];
