@@ -8,6 +8,7 @@ class PemesananModel extends Model
 {
     protected $table            = 'pemesanan';
     protected $primaryKey       = 'id';
+    protected $useTimestamps    = true;
     protected $allowedFields    = [
         'order_id',
         'user_id', 
@@ -26,9 +27,10 @@ class PemesananModel extends Model
     public function getPemesanan()
     {
         return $this->db->table('pemesanan')
-                        ->join('lapangan', 'lapangan.id = pemesanan.id_lapangan')
-                        ->join('users', 'users.id = pemesanan.id_user')
+                        ->join('lapangan', 'lapangan.id = pemesanan.lapangan_id')
+                        ->join('users', 'users.id = pemesanan.user_id')
                         ->select('pemesanan.*, lapangan.nama as nama_lapangan, users.nama as nama_pemesan')
+                        ->orderBy('pemesanan.id', 'DESC') // urutkan dari terbaru
                         ->get()->getResultArray(); 
     }
 
@@ -37,39 +39,29 @@ class PemesananModel extends Model
         return $this->select('pemesanan.*, users.nama as nama_pemesan, lapangan.nama as nama_lapangan')
                     ->join('users', 'users.id = pemesanan.user_id')
                     ->join('lapangan', 'lapangan.id = pemesanan.lapangan_id')
-                    ->orderBy('pemesanan.tanggal_pesan', 'DESC')
-                    ->orderBy('pemesanan.jam_mulai', 'DESC')
+                    ->orderBy('pemesanan.id', 'DESC') // urutkan dari terbaru
                     ->findAll();
     }
 
-    /**
-     * Mengambil data pemesanan berdasarkan tanggal.
-     *
-     * @param string $date Tanggal dalam format YYYY-MM-DD
-     * @return array
-     */
     public function getPemesananByDate(string $date)
     {
         return $this->select('pemesanan.*, users.nama as nama_pemesan, lapangan.nama as nama_lapangan')
                     ->join('users', 'users.id = pemesanan.user_id')
                     ->join('lapangan', 'lapangan.id = pemesanan.lapangan_id')
                     ->where('pemesanan.tanggal_pesan', $date)
-                    ->orderBy('pemesanan.jam_mulai', 'ASC')
+                    ->orderBy('pemesanan.tanggal_pesan', 'DESC') // urutkan dari terbaru
                     ->findAll();
     }
 
     public function getPemesananByDateRange(string $startDate, string $endDate)
     {
-        $builder = $this->db->table('pemesanan')
-                            ->join('lapangan', 'lapangan.id = pemesanan.lapangan_id')
-                            ->join('users', 'users.id = pemesanan.user_id')
-                            ->select('pemesanan.*, lapangan.nama as nama_lapangan, users.nama as nama_pemesan');
-
-        // Menambahkan kondisi WHERE untuk rentang tanggal
-        $builder->where('pemesanan.tanggal_pesan >=', $startDate);
-        $builder->where('pemesanan.tanggal_pesan <=', $endDate);
-
-        return $builder->get()->getResultArray();
+        return $this->select('pemesanan.*, lapangan.nama as nama_lapangan, users.nama as nama_pemesan')
+                    ->join('lapangan', 'lapangan.id = pemesanan.lapangan_id')
+                    ->join('users', 'users.id = pemesanan.user_id')
+                    ->where('pemesanan.tanggal_pesan >=', $startDate)
+                    ->where('pemesanan.tanggal_pesan <=', $endDate)
+                    ->orderBy('pemesanan.tanggal_pesan', 'DESC') // urutkan dari terbaru
+                    ->findAll();
     }
 
     public function getWithRelationUserId($userId)
@@ -89,9 +81,12 @@ class PemesananModel extends Model
                     ->findAll();
     }
 
-    public function getBookingByDate($tanggal)
+    public function getBookingByDate($id, $tanggal)
     {
-        return $this->where('tanggal_pesan', $tanggal)->findAll();
+        return $this->where('lapangan_id', $id)
+                    ->where('tanggal_pesan', $tanggal)
+                    ->orderBy('jam_mulai', 'ASC')
+                    ->findAll();
     }
     
 }

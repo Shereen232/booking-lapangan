@@ -108,5 +108,5 @@ $routes->group('pelanggan', ['namespace' => 'App\Controllers\Pelanggan', 'filter
 // ===========================
 $routes->group('api', ['filter' => 'auth'], function ($routes) {
     $routes->post('pemesanan/update-status', 'Pelanggan\PemesananController::updateStatus');
-    $routes->get('cekJamKosong/(:segment)', 'Api\BookingApi::cekJamKosong/$1');
+    $routes->get('cekJamKosong/(:segment)/(:segment)', 'Api\BookingApi::cekJamKosong/$1/$2');
 });

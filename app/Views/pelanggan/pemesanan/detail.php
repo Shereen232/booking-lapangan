@@ -62,7 +62,7 @@ $isTutup = isHariTutup($pengaturan['hari_tutup'] ?? '');
         <form action="<?= base_url('pelanggan/pemesanan/simpan') ?>" method="POST" id="formBooking">
 
         <?= csrf_field() ?>
-        <input type="hidden" name="lapangan_id" value="<?= $lapangan['id'] ?>">
+        <input type="hidden" id="lapangan_id" name="lapangan_id" value="<?= $lapangan['id'] ?>">
 
         <div class="row">
             <div class="col-md-6 mb-3">
@@ -126,7 +126,7 @@ $isTutup = isHariTutup($pengaturan['hari_tutup'] ?? '');
 
 <script>
     $(document).ready(function () {
-        changeDateBooking(document.getElementById('tanggal'));
+        changeDateBooking(document.getElementById('lapangan_id'), document.getElementById('tanggal'));
     });
 
   // Fungsi untuk update pilihan jam mulai dan selesai
@@ -159,132 +159,143 @@ $isTutup = isHariTutup($pengaturan['hari_tutup'] ?? '');
     });
 
     $('#tanggal').on('change', function () {
-        changeDateBooking(this);
+        const id = $('#lapangan_id');
+        changeDateBooking(id, this);
     });
 
-    function changeDateBooking(elem) {
-        let tanggal = $(elem).val();
+    function changeDateBooking(eID, eDATE) {
+        let id = $(eID).val();
+        let tanggal = $(eDATE).val();
         $('#jam_mulai').empty();
         $('#jam_selesai').empty();
 
-        $.get('/api/cekJamKosong/' + tanggal, function (res) {
+        const hariTutup = <?= json_encode(array_map('trim', explode(',', $pengaturan['hari_tutup'] ?? ''))) ?>;
+        const hariIndo = new Intl.DateTimeFormat('id-ID', { weekday: 'long' }).format(new Date(tanggal));
+
+        if (hariTutup.includes(hariIndo.charAt(0).toUpperCase() + hariIndo.slice(1))) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Hari Tutup',
+                text: `Maaf, kami tutup setiap hari ${hariIndo}. Silakan pilih hari lain.`,
+            });
+
+            $('#jam_mulai').prop('disabled', true);
+            $('#jam_selesai').prop('disabled', true);
+            return;
+        } else {
+            $('#jam_mulai').prop('disabled', false);
+            $('#jam_selesai').prop('disabled', false);
+        }
+
+        $.get('/api/cekJamKosong/' + id + '/' + tanggal, function (res) {
             slotList = res.available_slots;
 
+            const now = new Date();
+            const today = new Date().toISOString().slice(0, 10);
+            const isToday = tanggal === today;
+
             slotList.forEach((slot, i) => {
-                let start = slot.split(' - ')[0].slice(0, 5);
+                let start = slot.split(' - ')[0].slice(0, 5); // HH:mm
+
+                if (isToday) {
+                    let [h, m] = start.split(':');
+                    let slotTime = new Date();
+                    slotTime.setHours(parseInt(h), parseInt(m), 0);
+
+                    if (slotTime <= now) return; // Skip slot yang sudah lewat
+                }
+
                 $('#jam_mulai').append(`<option value="${start}" data-index="${i}">${start}</option>`);
             });
 
-            // Trigger isi jam selesai
             $('#jam_mulai').trigger('change');
         });
     }
 
-    function changeDateBooking(elem) {
-    let tanggal = $(elem).val();
-    $('#jam_mulai').empty();
-    $('#jam_selesai').empty();
-
-    const hariTutup = <?= json_encode(array_map('trim', explode(',', $pengaturan['hari_tutup'] ?? ''))) ?>;
-    const hariIndo = new Intl.DateTimeFormat('id-ID', { weekday: 'long' }).format(new Date(tanggal));
-
-    if (hariTutup.includes(hariIndo.charAt(0).toUpperCase() + hariIndo.slice(1))) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Hari Tutup',
-            text: `Maaf, kami tutup setiap hari ${hariIndo}. Silakan pilih hari lain.`,
-        });
-
-        $('#jam_mulai').prop('disabled', true);
-        $('#jam_selesai').prop('disabled', true);
-        return;
-    } else {
-        $('#jam_mulai').prop('disabled', false);
-        $('#jam_selesai').prop('disabled', false);
-    }
-
-    $.get('/api/cekJamKosong/' + tanggal, function (res) {
-        slotList = res.available_slots;
-
-        const now = new Date();
-        const today = new Date().toISOString().slice(0, 10);
-        const isToday = tanggal === today;
-
-        slotList.forEach((slot, i) => {
-            let start = slot.split(' - ')[0].slice(0, 5); // HH:mm
-
-            if (isToday) {
-                let [h, m] = start.split(':');
-                let slotTime = new Date();
-                slotTime.setHours(parseInt(h), parseInt(m), 0);
-
-                if (slotTime <= now) return; // Skip slot yang sudah lewat
-            }
-
-            $('#jam_mulai').append(`<option value="${start}" data-index="${i}">${start}</option>`);
-        });
-
-        $('#jam_mulai').trigger('change');
-    });
-}
-
 
     document.getElementById('formBooking').addEventListener('submit', async function (e) {
-    e.preventDefault();
+        e.preventDefault();
 
-    const confirm = await Swal.fire({
-        title: 'Konfirmasi Pemesanan',
-        text: 'Apakah Anda yakin ingin melanjutkan pemesanan ini?',
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Ya, pesan sekarang',
-        cancelButtonText: 'Batal'
-    });
-
-    if (!confirm.isConfirmed) {
-        return; // Batal submit
-    }
-
-    const form = e.target;
-    const formData = new FormData(form);
-
-    try {
-        const response = await fetch("<?= base_url('pelanggan/pemesanan/simpan') ?>", {
-            method: "POST",
-            body: formData,
+        const confirm = await Swal.fire({
+            title: 'Konfirmasi Pemesanan',
+            text: 'Apakah Anda yakin ingin melanjutkan pemesanan ini?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, pesan sekarang',
+            cancelButtonText: 'Batal'
         });
 
-        const result = await response.json();
-
-        if (result.success) {
-            const modalEl = document.getElementById('modalBooking');
-            const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
-            modal.show();
-
-            window.snap.embed(result.snapToken, {
-                embedId: 'snap-container',
-                onSuccess: function (result) {
-                    // ... (lanjut seperti sebelumnya)
-                },
-                onPending: function (result) {
-                    Swal.fire('Menunggu Pembayaran', 'Silakan lanjutkan di Midtrans.', 'info');
-                },
-                onError: function (result) {
-                    Swal.fire('Gagal', 'Pembayaran gagal dilakukan.', 'error');
-                },
-                onClose: function () {
-                    Swal.fire('Ditutup', 'Anda menutup jendela pembayaran.', 'info');
-                }
-            });
-        } else {
-            Swal.fire('Gagal', result.message || 'Terjadi kesalahan saat memproses data.', 'error');
+        if (!confirm.isConfirmed) {
+            return; // Batal submit
         }
-    } catch (err) {
-        console.error('Error:', err);
-        Swal.fire('Gagal', 'Gagal mengirim data. Silakan coba lagi.', 'error');
-    }
-});
 
+        const form = e.target;
+        const formData = new FormData(form);
+
+        try {
+            const response = await fetch("<?= base_url('pelanggan/pemesanan/simpan') ?>", {
+                method: "POST",
+                body: formData,
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                const modalEl = document.getElementById('modalBooking');
+                const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+                modal.show();
+
+                window.snap.embed(result.snapToken, {
+                    embedId: 'snap-container',
+                    onSuccess: function (result) {
+                        // Kirim ke server untuk update status
+                        fetch("<?= base_url('api/pemesanan/update-status') ?>", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRF-TOKEN": "<?= csrf_hash() ?>"
+                            },
+                            body: JSON.stringify({
+                                order_id: result.order_id,
+                                transaction_status: result.transaction_status,
+                                payment_type: result.payment_type,
+                                gross_amount: result.gross_amount
+                            })
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error("Gagal mengupdate status di server");
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            console.log("Status pembayaran diperbarui:", data);
+                            modal.hide();
+                            window.location.href = "<?= base_url('pelanggan/pembayaran') ?>";
+                        })
+                        .catch(error => {
+                            console.error("Error:", error);
+                            alert("Terjadi kesalahan saat mengupdate status ke server.");
+                        });
+                    },
+                    onPending: function (result) {
+                        Swal.fire('Menunggu Pembayaran', 'Silakan lanjutkan di Midtrans.', 'info');
+                    },
+                    onError: function (result) {
+                        Swal.fire('Gagal', 'Pembayaran gagal dilakukan.', 'error');
+                    },
+                    onClose: function () {
+                        Swal.fire('Ditutup', 'Anda menutup jendela pembayaran.', 'info');
+                    }
+                });
+            } else {
+                Swal.fire('Gagal', result.message || 'Terjadi kesalahan saat memproses data.', 'error');
+            }
+        } catch (err) {
+            console.error('Error:', err);
+            Swal.fire('Gagal', 'Gagal mengirim data. Silakan coba lagi.', 'error');
+        }
+    });
 
 </script>
 

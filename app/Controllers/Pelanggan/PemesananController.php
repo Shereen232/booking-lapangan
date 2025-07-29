@@ -62,7 +62,6 @@ class PemesananController extends BaseController
         // Ambil jadwal booking
         $pemesananModel = new \App\Models\PemesananModel();
         $jadwal_terbooking = $pemesananModel->where('lapangan_id', $id)
-            ->where('tanggal_pesan', $tanggal)
             ->findAll();
 
         // Hitung sisa slot
@@ -72,7 +71,6 @@ class PemesananController extends BaseController
 
         $data = [
             'lapangan' => $lapangan,
-            'tanggal_pesan' => $tanggal,
             'jadwal_terbooking' => $jadwal_terbooking,
             'sisa_slot' => $sisa_slot,
             'pengaturan' => $pengaturan,

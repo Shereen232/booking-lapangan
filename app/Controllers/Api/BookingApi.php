@@ -5,13 +5,13 @@ namespace App\Controllers\Api;
 use App\Controllers\BaseController;
 class BookingApi extends BaseController
 {
-    public function cekJamKosong($tanggal)
+    public function cekJamKosong($id, $tanggal)
     {
         $bookingModel = new \App\Models\PemesananModel();
         $pengaturanModel = new \App\Models\PengaturanModel();
 
         // Ambil semua booking di tanggal tertentu
-        $bookings = $bookingModel->getBookingByDate($tanggal);
+        $bookings = $bookingModel->getBookingByDate($id, $tanggal);
         $pengaturan = $pengaturanModel->first();
 
         // Waktu operasional lapangan
