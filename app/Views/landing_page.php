@@ -61,11 +61,7 @@
                         <!-- Action form ini perlu disesuaikan dengan rute pencarian lapangan yang akan Anda buat -->
                         <form action="#" method="GET"> 
                             <div class="row g-3 align-items-end">
-                                <div class="col-md-6">
-                                    <label for="tanggal" class="form-label fw-bold text-dark">Tanggal</label>
-                                    <input type="date" class="form-control form-control-lg" id="tanggal" required>
-                                </div>
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <a href="#lapangan" type="submit" class="btn btn-primary btn-lg w-100 cta-button">Cari Lapangan</a>
                                 </div>
                             </div>
@@ -84,23 +80,23 @@
                 <div class="col-md-3 mb-4">
                     <!-- Menggunakan base_url() untuk path ikon -->
                     
-                    <h5 class="fw-bold">Pesan Cepat</h5>
-                    <p class="text-muted">Pesan lapangan hanya dalam 3 langkah mudah.</p>
+                    <h5 class="fw-bold">🕒 Informasi Cepat</h5>
+                    <p class="text-muted">Temukan jadwal lapangan dengan mudah dan cepat dalam satu platform.</p>
                 </div>
                 <div class="col-md-3 mb-4">
                    
-                    <h5 class="fw-bold">Lapangan Lengkap</h5>
-                    <p class="text-muted">Pilih dari berbagai lapangan dengan fasilitas terbaik.</p>
+                    <h5 class="fw-bold">⚽ Data Lapangan Lengkap</h5>
+                    <p class="text-muted">Lihat detail fasilitas, lokasi, dan spesifikasi dari berbagai lapangan futsal di sekitarmu.</p>
                 </div>
                 <div class="col-md-3 mb-4">
                     
-                    <h5 class="fw-bold">Harga Transparan</h5>
-                    <p class="text-muted">Tidak ada biaya tersembunyi. Harga ditampilkan jelas.</p>
+                    <h5 class="fw-bold">📖 Informasi Jelas</h5>
+                    <p class="text-muted">Deskripsi lapangan dan ketentuan penggunaan disajikan secara ringkas dan mudah dipahami.</p>
                 </div>
                 <div class="col-md-3 mb-4">
                     
-                    <h5 class="fw-bold">Pembayaran Aman</h5>
-                    <p class="text-muted">Transaksi aman dan nyaman dengan berbagai metode.</p>
+                    <h5 class="fw-bold">📌 Mudah Diakses</h5>
+                    <p class="text-muted">Tampilan antarmuka yang sederhana dan mudah digunakan</p>
                 </div>
             </div>
         </div>

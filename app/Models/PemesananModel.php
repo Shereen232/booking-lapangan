@@ -13,6 +13,7 @@ class PemesananModel extends Model
         'order_id',
         'user_id', 
         'nama_pemesan',
+        'kode_booking',
         'lapangan_id', 
         'tanggal_pesan', 
         'jam_mulai', 
@@ -21,7 +22,8 @@ class PemesananModel extends Model
         'status',
         'payment_type',
         'catatan',
-        'snaptoken'
+        'snaptoken',
+        'tambahan_fasilitas'
     ];
 
     public function getPemesanan()

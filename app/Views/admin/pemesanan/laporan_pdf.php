@@ -69,14 +69,14 @@ if (file_exists($path)) {
         .badge {
             padding: 3px 8px;
             border-radius: 4px;
-            color: #fff;
+
             font-size: 8pt;
-            display: inline-block;
+
         }
-        .bg-warning { background-color: #ffc107; color: #000; }
-        .bg-success { background-color: #28a745; }
-        .bg-pending { background-color: #6c757d; }
-        .bg-info { background-color: #17a2b8; }
+        .bg-warning { background-color: #ffffffff; color: #000; }
+        .bg-success { background-color: #ffffffff; }
+        .bg-pending { background-color: #ffffffff; }
+        .bg-info { background-color: #ffffffff; }
 
         .footer {
             text-align: right;
@@ -115,12 +115,15 @@ if (file_exists($path)) {
     <thead>
         <tr>
             <th>No</th>
+            <th>Kode Booking</th>
             <th>Nama Pemesan</th>
             <th>Lapangan</th>
             <th>Tanggal</th>
             <th>Jam Mulai</th>
             <th>Jam Selesai</th>
             <th>Keterangan</th>
+            <th>Fasilitas Tambahan</th>
+            <th>Catatan</th>
             <th>Total Bayar</th>
             <th>Status</th>
         </tr>
@@ -158,12 +161,15 @@ if (file_exists($path)) {
                 ?>
                 <tr>
                     <td><?= $no++ ?></td>
+                    <td><?= esc($p['kode_booking']) ?></td>
                     <td><?= esc($p['nama_pemesan']) ?></td>
                     <td><?= esc($p['nama_lapangan']) ?></td>
                     <td><?= date('d M Y', strtotime($p['tanggal_pesan'])) ?></td>
                     <td><?= $p['jam_mulai'] ?></td>
                     <td><?= $p['jam_selesai'] ?></td>
                     <td><span class="badge <?= $ketClass ?>"><?= $ket ?></span></td>
+                    <td><?= esc($p['tambahan_fasilitas']) ?></td>
+                    <td><?= esc($p['catatan']) ?></td>
                     <td>Rp<?= number_format($p['total_bayar'], 0, ',', '.') ?></td>
                     <td><span class="badge <?= $statusClass ?>"><?= ucfirst($p['status']) ?></span></td>
                 </tr>

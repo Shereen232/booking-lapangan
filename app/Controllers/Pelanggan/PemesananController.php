@@ -59,9 +59,10 @@ class PemesananController extends BaseController
         $hariTanggal = $this->konversiHari(date('l', strtotime($tanggal)));
         $isTutup = in_array($hariTanggal, $hariTutup);
 
-        // Ambil jadwal booking
+        // Ambil jadwal booking HANYA untuk tanggal yang dipilih
         $pemesananModel = new \App\Models\PemesananModel();
         $jadwal_terbooking = $pemesananModel->where('lapangan_id', $id)
+            ->where('tanggal_pesan', $tanggal)
             ->findAll();
 
         // Hitung sisa slot
@@ -74,7 +75,8 @@ class PemesananController extends BaseController
             'jadwal_terbooking' => $jadwal_terbooking,
             'sisa_slot' => $sisa_slot,
             'pengaturan' => $pengaturan,
-            'isTutup' => $isTutup
+            'isTutup' => $isTutup,
+            'tanggal' => $tanggal
         ];
 
         return view('pelanggan/pemesanan/detail', $data);
@@ -95,6 +97,15 @@ class PemesananController extends BaseController
             $biayaTambahan = $request->getPost('biaya') ?? []; // array
             $catatan = $request->getPost('catatan');
 
+            // Tambahan: mapping fasilitas dari value ke nama
+            $fasilitasDipilih = [];
+            foreach ($biayaTambahan as $val) {
+                if ($val == "10000") $fasilitasDipilih[] = "Rompi Tim";
+                if ($val == "5000") $fasilitasDipilih[] = "Bola Tambahan";
+                // Tambahkan mapping sesuai kebutuhan jika ada fasilitas baru
+            }
+            $tambahanFasilitas = implode(', ', $fasilitasDipilih);
+
             // ==== Simulasi session sementara ====
             $userId = $session->get('user_id'); // anggap user login
             $namaPemesan = $session->get('nama');
@@ -102,6 +113,7 @@ class PemesananController extends BaseController
             // Ambil pengaturan dan cek hari tutup
             $pengaturanModel = new \App\Models\PengaturanModel();
             $pengaturan = $pengaturanModel->first();
+
             $hariTutup = explode(',', $pengaturan['hari_tutup'] ?? '');
             $hariTanggal = $this->konversiHari(date('l', strtotime($tanggal)));
             
@@ -136,17 +148,18 @@ class PemesananController extends BaseController
             // Simpan ke database
             $pemesananModel = new \App\Models\PemesananModel();
             $pemesananModel->save([
-                'user_id'       => $userId,
-                'order_id'      => $order_id,
-                'nama_pemesan'  => $namaPemesan,
-                'lapangan_id'   => $lapanganId,
-                'tanggal_pesan' => $tanggal,
-                'jam_mulai'     => $jamMulai,
-                'jam_selesai'   => $jamSelesai,
-                'jumlah_air'    => $jumlahAir,
-                'catatan'       => $catatan,
-                'total_bayar'   => $total,
-                'status'        => 'pending'
+                'user_id'             => $userId,
+                'order_id'            => $order_id,
+                'nama_pemesan'        => $namaPemesan,
+                'lapangan_id'         => $lapanganId,
+                'tanggal_pesan'       => $tanggal,
+                'jam_mulai'           => $jamMulai,
+                'jam_selesai'         => $jamSelesai,
+                'jumlah_air'          => $jumlahAir,
+                'catatan'             => $catatan,
+                'total_bayar'         => $total,
+                'status'              => 'pending',
+                'tambahan_fasilitas'  => $tambahanFasilitas
             ]);
 
             // Midtrans
@@ -178,7 +191,6 @@ class PemesananController extends BaseController
                 'total' => $total,
                 'snapToken' => $snapToken
             ]);
-
         } catch (\Exception $e) {
             log_message('error', 'Gagal simpan pemesanan: ' . $e->getMessage());
 
@@ -193,15 +205,25 @@ class PemesananController extends BaseController
     public function updateStatus()
     {
         $pemesananModel = new \App\Models\PemesananModel();
-
         $data = $this->request->getJSON();
-        // Misalnya update ke database
+
+        // Cek status pembayaran
+        $updateData = [
+            'status' => $data->transaction_status,
+            'payment_type' => $data->payment_type,
+            'total_bayar' => $data->gross_amount
+        ];
+
+        // Tambahkan kode booking jika pembayaran settlement
+        if ($data->transaction_status === 'settlement') {
+            // Generate kode booking unik (misal: KBK-20250806-XXXX)
+            $kodeBooking = 'KBK-' . date('Ymd') . '-' . strtoupper(bin2hex(random_bytes(3)));
+            $updateData['kode_booking'] = $kodeBooking;
+        }
+
         $pemesananModel->where('order_id', $data->order_id)
-                                ->set([
-                                    'status' => $data->transaction_status,
-                                    'payment_type'      => $data->payment_type,
-                                    'total_bayar'      => $data->gross_amount
-                                ])->update();
+                    ->set($updateData)
+                    ->update();
 
         return $this->response->setJSON(['status' => 'success']);
     }

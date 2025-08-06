@@ -38,6 +38,8 @@
                 <div class="card-body d-flex flex-column justify-content-between">
                   <div>
                     <h5 class="card-title"><?= esc($jadwal['nama']) ?></h5>
+                    <p class="mb-1"><strong>👤 Pemesan:</strong> <?= esc($jadwal['nama_pemesan']) ?></p>
+                    <p class="mb-1"><strong>🔑 Kode Booking:</strong> <span class="text-success"><?= esc($jadwal['kode_booking']) ?></span></p>
                     <p class="mb-1"><strong>🗓️ Tanggal Booking:</strong> <?= date('d M Y, H:i', strtotime($jadwal['tanggal_pesan'])) ?></p>
                     <p class="mb-1"><strong>⏰ Waktu:</strong> <?= $jadwal['jam_mulai'] ?> - <?= $jadwal['jam_selesai'] ?></p>
                     <p class="mb-3"><strong>💰 Status Pembayaran:</strong>
@@ -50,6 +52,8 @@
                   </div>
                   <button type="button" class="btn btn-primary w-100 mt-auto" data-bs-toggle="modal" data-bs-target="#modalDetail" 
                       data-nama="<?= esc($jadwal['nama']) ?>"
+                      data-nama-pemesan="<?= esc($jadwal['nama_pemesan']) ?>"
+                      data-kode-booking="<?= esc($jadwal['kode_booking']) ?>"
                       data-tanggal="<?= date('d M Y, H:i', strtotime($jadwal['tanggal_pesan'])) ?>"
                       data-jam="<?= $jadwal['jam_mulai'] ?> - <?= $jadwal['jam_selesai'] ?>"
                       data-status="<?= $jadwal['status_pembayaran'] ?>"
@@ -79,7 +83,9 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
+        <p><strong>Nama Pemesan:</strong> <span id="modalNamaPemesan"></span></p>
         <p><strong>Lapangan:</strong> <span id="modalNamaLapangan"></span></p>
+        <p><strong>Kode Booking:</strong> <span id="modalKodeBooking" class="text-success"></span></p>
         <p><strong>Tanggal Booking:</strong> <span id="modalTanggal"></span></p>
         <p><strong>Waktu:</strong> <span id="modalJam"></span></p>
         <p><strong>Status Pembayaran:</strong> <span id="modalStatusPembayaran"></span></p>
@@ -94,20 +100,21 @@
 </div>
 
 <script>
-  // Menangani event untuk membuka modal dengan data yang sesuai
   var modal = document.getElementById('modalDetail');
   modal.addEventListener('show.bs.modal', function (event) {
-    // Ambil data yang dimasukkan ke tombol
-    var button = event.relatedTarget; // Tombol yang mengaktifkan modal
+    var button = event.relatedTarget;
     var namaLapangan = button.getAttribute('data-nama');
+    var namaPemesan = button.getAttribute('data-nama-pemesan');
+    var kodeBooking = button.getAttribute('data-kode-booking');
     var tanggal = button.getAttribute('data-tanggal');
     var jam = button.getAttribute('data-jam');
     var statusPembayaran = button.getAttribute('data-status');
     var catatan = button.getAttribute('data-catatan');
     var total = button.getAttribute('data-total');
 
-    // Isi modal dengan data yang diambil
     modal.querySelector('#modalNamaLapangan').textContent = namaLapangan;
+    modal.querySelector('#modalNamaPemesan').textContent = namaPemesan;
+    modal.querySelector('#modalKodeBooking').textContent = kodeBooking ? kodeBooking : '-';
     modal.querySelector('#modalTanggal').textContent = tanggal;
     modal.querySelector('#modalJam').textContent = jam;
     modal.querySelector('#modalStatusPembayaran').textContent = statusPembayaran === 'settlement' ? 'Sudah Dibayar' : 'Belum Dibayar';

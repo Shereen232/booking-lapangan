@@ -32,6 +32,10 @@
                             <i class="fas fa-file-pdf me-1"></i> Ekspor PDF
                             </a>
                         </div>
+                        <div class="col-md-auto">
+                            <a href="<?= site_url('admin/pemesanan/create') ?>" class="btn btn-success btn-sm">
+                            <i class="fas fa-plus me-1"></i> Tambah Pemesanan
+                            </a>   
                     </div>
                 </form>
             </div>
@@ -51,12 +55,15 @@
                         <thead>
                             <tr>
                                 <th>No</th>
+                                <th>Kode Booking</th>
                                 <th>Nama Pemesan</th>
                                 <th>Lapangan</th>
                                 <th>Tanggal</th>
                                 <th>Jam Mulai</th>
                                 <th>Jam Selesai</th>
                                 <th>Keterangan</th>
+                                <th>Fasilitas Tambahan</th>
+                                <th>Catatan</th>
                                 <th>Total Bayar</th>
                                 <th>Status</th>
                             </tr>
@@ -93,16 +100,19 @@
                                     ?>
                                     <tr>
                                         <td><?= $no++ ?></td>
+                                        <td><?= esc($p['kode_booking']) ?></td>
                                         <td><?= esc($p['nama_pemesan']) ?></td>
                                         <td><?= esc($p['nama_lapangan']) ?></td>
                                         <td><?= date('d M Y', strtotime($p['tanggal_pesan'])) ?></td>
                                         <td><?= $p['jam_mulai'] ?></td>
                                         <td><?= $p['jam_selesai'] ?></td>
                                         <td><span class="badge <?= $ket_badge_class ?>"><?= $ket ?></span></td>
+                                        <td><?= esc($p['tambahan_fasilitas']) ?></td>
+                                        <td><?= esc($p['catatan']) ?></td>
                                         <td>Rp<?= number_format($p['total_bayar'], 0, ',', '.') ?></td>
                                         <td>
                                             <span class="badge bg-<?= $p['status'] == 'pending' ? 'warning' : 'success' ?>">
-                                                <?= ucfirst($p['status']) ?>
+                                                <?= $p['status'] == 'pending' ? 'Menunggu' : 'Berhasil' ?>
                                             </span>
                                         </td>
                                     </tr>

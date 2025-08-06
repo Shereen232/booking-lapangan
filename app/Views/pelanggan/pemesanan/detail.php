@@ -40,14 +40,33 @@ $isTutup = isHariTutup($pengaturan['hari_tutup'] ?? '');
             <?php endif; ?>
 
             <div class="mt-3">
-                <h6>Jadwal Sudah Dipesan:</h6>
-                <?php if (!empty($jadwal_terbooking)) : ?>
-                    <?php foreach ($jadwal_terbooking as $jadwal) : ?>
-                        <span class="badge bg-danger mb-1"><?= $jadwal['jam_mulai'] ?> - <?= $jadwal['jam_selesai'] ?></span>
-                    <?php endforeach ?>
-                <?php else : ?>
-                    <p class="text-muted">Belum ada jadwal terbooking untuk tanggal ini.</p>
-                <?php endif ?>
+                    <h6>Jadwal Sudah Dipesan:</h6>
+                    <?php if (!empty($jadwal_terbooking)) : ?>
+                        <div class="table-responsive">
+                        <table class="table table-bordered table-sm">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Jam Mulai</th>
+                                    <th>Jam Selesai</th>
+                                    <th>Nama Pemesan</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($jadwal_terbooking as $i => $jadwal) : ?>
+                                <tr>
+                                    <td><?= $i + 1 ?></td>
+                                    <td><?= esc($jadwal['jam_mulai']) ?></td>
+                                    <td><?= esc($jadwal['jam_selesai']) ?></td>
+                                    <td><?= esc($jadwal['nama_pemesan']) ?></td>
+                                </tr>
+                                <?php endforeach ?>
+                            </tbody>
+                        </table>
+                        </div>
+                    <?php else : ?>
+                        <p class="text-muted">Belum ada jadwal terbooking untuk tanggal ini.</p>
+                    <?php endif ?>
             </div>
         </div>
     </div>
@@ -66,21 +85,31 @@ $isTutup = isHariTutup($pengaturan['hari_tutup'] ?? '');
 
         <div class="row">
             <div class="col-md-6 mb-3">
-                <label for="tanggal" class="form-label">Tanggal</label>
-                <input id="tanggal" type="date" name="tanggal" class="form-control" required min="<?= date('Y-m-d') ?>" value="<?= date('Y-m-d') ?>">
+                <label for="tanggal" class="form-label fw-semibold">
+                    <i class="bi bi-calendar-event me-2"></i>Tanggal Booking
+                </label>
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0">
+                        <i class="bi bi-calendar-date"></i>
+                    </span>
+                    <input type="date"
+                        class="form-control border-start-0"
+                        name="tanggal"
+                        id="tanggal"
+                        value="<?= $tanggal ?>"
+                        onchange="window.location.href='<?= base_url('pelanggan/pemesanan/detail/'.$lapangan['id']) ?>?tanggal='+this.value">
+                </div>
             </div>
 
             <div class="col-md-3 mb-3">
                 <label for="jam_mulai" class="form-label">Jam Mulai</label>
                 <select name="jam_mulai" id="jam_mulai" class="form-select" required>
-                    <!-- Jam akan diisi via AJAX -->
                 </select>
             </div>
 
             <div class="col-md-3 mb-3">
                 <label for="jam_selesai" class="form-label">Jam Selesai</label>
                 <select name="jam_selesai" id="jam_selesai" class="form-select" required>
-                    <!-- Jam selesai akan diisi setelah memilih jam mulai -->
                 </select>
             </div>
         </div>
