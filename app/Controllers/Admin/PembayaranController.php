@@ -21,7 +21,7 @@ class PembayaranController extends BaseController
         // Jika tidak ada input dari GET, default ke hari ini
         $tanggalMulai = $this->request->getVar('tanggalMulai') ?? date('Y-m-d');
         $tanggalSelesai = $this->request->getVar('tanggalSelesai') ?? date('Y-m-d');
-
+        $status = $this->request->getVar('status') ?? null;
 
         // Gunakan alias agar sesuai dengan view
         $query = $this->pemesananModel
@@ -34,12 +34,22 @@ class PembayaranController extends BaseController
                   ->where('pemesanan.tanggal_pesan <=', $tanggalSelesai);
         }
 
+        if (!empty($status)) {
+            $query->where('pemesanan.status', $status);
+        }
+        
+        $pemesanan = $query->orderBy('pemesanan.tanggal_pesan', 'desc')->findAll();
+        $totalTransaksi = count($pemesanan);
+        $totalPendapatan = array_sum(array_column($pemesanan, 'total_bayar'));
 
 
         $data = [
-            'pemesanan' => $query->orderBy('pemesanan.tanggal_pesan', 'desc')->findAll(),
+            'pemesanan' => $pemesanan,
             'tanggalMulai' => $tanggalMulai,
             'tanggalSelesai' => $tanggalSelesai,
+            'status' => $status,
+            'totalTransaksi' => $totalTransaksi,
+            'totalPendapatan' => $totalPendapatan
         ];
 
 

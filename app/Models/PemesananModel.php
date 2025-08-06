@@ -55,13 +55,14 @@ class PemesananModel extends Model
                     ->findAll();
     }
 
-    public function getPemesananByDateRange(string $startDate, string $endDate)
+    public function getPemesananByDateRange(string $startDate, string $endDate, $status = null)
     {
         return $this->select('pemesanan.*, lapangan.nama as nama_lapangan, users.nama as nama_pemesan')
                     ->join('lapangan', 'lapangan.id = pemesanan.lapangan_id')
                     ->join('users', 'users.id = pemesanan.user_id')
                     ->where('pemesanan.tanggal_pesan >=', $startDate)
                     ->where('pemesanan.tanggal_pesan <=', $endDate)
+                    ->where('pemesanan.status', $status)
                     ->orderBy('pemesanan.tanggal_pesan', 'DESC') // urutkan dari terbaru
                     ->findAll();
     }

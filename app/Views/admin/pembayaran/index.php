@@ -17,6 +17,14 @@
                     <input type="date" class="form-control" id="tanggalSelesai" name="tanggalSelesai" value="<?= old('tanggalSelesai', $tanggalSelesai ?? '') ?>">
                 </div>
                 <div class="col-md-auto">
+                    <label for="status" class="form-label">Status:</label>
+                    <select class="form-select" id="status" name="status">
+                        <option value="">-- Semua Status --</option>
+                        <option value="pending" <?= ($status ?? '') === 'pending' ? 'selected' : '' ?>>Menunggu Pembayaran</option>
+                        <option value="settlement" <?= ($status ?? '') === 'settlement' ? 'selected' : '' ?>>Pembayaran Selesai</option>
+                    </select>
+                </div>
+                <div class="col-md-auto">
                     <button type="submit" class="btn btn-primary">Filter</button>
                     <a href="<?= current_url() ?>" class="btn btn-secondary">Reset Filter</a>
                 </div>
@@ -27,6 +35,26 @@
                 </div>
             </div>
         </form>
+
+        <div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card border-primary">
+            <div class="card-body">
+                <h6 class="card-title">Total Transaksi</h6>
+                <p class="card-text fs-5 fw-bold"><?= $totalTransaksi ?> transaksi</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card border-success">
+            <div class="card-body">
+                <h6 class="card-title">Total Pendapatan</h6>
+                <p class="card-text fs-5 fw-bold">Rp<?= number_format($totalPendapatan, 0, ',', '.') ?></p>
+            </div>
+        </div>
+    </div>
+</div>
+
 
         <div class="table-responsive">
             <table class="table table-striped">
@@ -51,7 +79,11 @@
                             <td><?= date('d M Y', strtotime($p['tanggal_pesan'])) ?></td>
                             <td>
                                 <span class="badge bg-<?= $p['status'] == 'pending' ? 'warning' : 'success' ?>">
-                                    <?= ucfirst($p['status']) ?>
+                                    <?php if ($p['status'] == 'pending'): ?>
+                                        Menunggu Pembayaran
+                                    <?php else: ?>
+                                        Lunas
+                                    <?php endif; ?>
                                 </span>
                             </td>
                             <td><?= $p['payment_type'] ?></td>

@@ -40,7 +40,8 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin','filter' => 'aut
     $routes->group('pemesanan', function($routes) {
         $routes->get('/', 'PemesananController::index');
         $routes->get('exportPdf', 'PemesananController::exportPdf');
-        $routes->get('edit/(:num)', 'PemesananController::edit/$1');
+        $routes->get('create', 'PemesananController::create');
+        $routes->post('store', 'PemesananController::store');
         $routes->post('update/(:num)', 'PemesananController::update/$1');
         $routes->get('delete/(:num)', 'PemesananController::delete/$1');
     });

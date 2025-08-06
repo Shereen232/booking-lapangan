@@ -103,6 +103,17 @@ class PemesananController extends BaseController
         $dompdf->stream($filename, array("Attachment" => 0));
         exit(); // Penting untuk menghentikan eksekusi setelah PDF di-stream
     }
+
+    public function create()
+    {
+        $lapanganModel = new \App\Models\LapanganModel();
+        $data = [
+            'title' => 'Tambah Pemesanan',
+            'lapangan' => $lapanganModel->findAll(),
+        ];
+        return view('admin/pemesanan/create', $data);
+    }
+
 }
 
     // public function edit($id)
