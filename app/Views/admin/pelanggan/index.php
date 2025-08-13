@@ -3,6 +3,9 @@
 
 <div class="card shadow p-4">
     <h3 class="mb-4">Kelola Pelanggan</h3>
+    <div class="mb-3">
+        <a href="<?= base_url('admin/pelanggan/create') ?>" class="btn btn-primary">Tambah Pelanggan</a>
+    </div>
 
     <table class="table table-bordered table-hover">
         <thead class="table-light">

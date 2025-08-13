@@ -26,6 +26,45 @@ class PelangganController extends BaseController
         ]);
     }
 
+    public function create()
+    {
+        return view('admin/pelanggan/create');
+    }
+
+    public function store()
+    {
+        $userModel = new UserModel();
+
+        // Validasi input
+        $validation = \Config\Services::validation();
+        $validation->setRules([
+            'nama' => 'required|min_length[3]',
+            'email' => 'valid_email',
+            'no_hp' => 'permit_empty|integer|min_length[10]|max_length[14]',
+            'alamat' => 'permit_empty',
+            'password' => 'required|min_length[6]'
+        ]);
+
+        if (!$this->validate($validation->getRules())) {
+            return redirect()->back()->withInput()->with('error', $validation->getErrors());
+        }
+        // Simpan data pelanggan
+        $data = [
+            'nama'   => $this->request->getPost('nama'),
+            'email'  => $this->request->getPost('email'),
+            'no_hp' => $this->request->getPost('no_hp'),
+            'alamat' => $this->request->getPost('alamat'),
+            'role'   => 'pelanggan',
+            'password' => $this->request->getPost('password') ? password_hash($this->request->getPost('password'), PASSWORD_DEFAULT) : null
+        ];
+
+        if ($userModel->insert($data)) {
+            return redirect()->to('/admin/pelanggan')->with('success', 'Pelanggan berhasil ditambahkan.');
+        } else {
+            return redirect()->back()->withInput()->with('error', 'Gagal menambahkan pelanggan.');
+        }
+    }
+
     public function edit($id)
     {
         $userModel = new UserModel();

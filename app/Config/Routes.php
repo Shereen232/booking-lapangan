@@ -55,6 +55,8 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin','filter' => 'aut
     // Kelola Pelanggan
     $routes->group('pelanggan', function($routes) {
         $routes->get('/', 'PelangganController::index');
+        $routes->get('create', 'PelangganController::create');
+        $routes->post('store', 'PelangganController::store');
         $routes->get('edit/(:num)', 'PelangganController::edit/$1');
         $routes->post('update/(:num)', 'PelangganController::update/$1');
         $routes->post('delete/(:num)', 'PelangganController::delete/$1');
