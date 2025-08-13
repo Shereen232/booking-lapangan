@@ -110,4 +110,6 @@ $routes->group('pelanggan', ['namespace' => 'App\Controllers\Pelanggan', 'filter
 $routes->group('api', ['filter' => 'auth'], function ($routes) {
     $routes->post('pemesanan/update-status', 'Pelanggan\PemesananController::updateStatus');
     $routes->get('cekJamKosong/(:segment)/(:segment)', 'Api\BookingApi::cekJamKosong/$1/$2');
+    $routes->get('pelanggan/search', 'Api\BookingApi::searchPelanggan');
+    $routes->get('lapangan/(:segment)/get', 'Api\BookingApi::getLapanganById/$1');
 });

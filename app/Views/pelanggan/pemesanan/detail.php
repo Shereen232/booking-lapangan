@@ -116,23 +116,23 @@ $isTutup = isHariTutup($pengaturan['hari_tutup'] ?? '');
 
         <div class="mb-3">
             <label class="form-label">Tambahan Fasilitas (Opsional)</label>
-            <div class="row">
-                <div class="col-md-4 mb-2">
-                    <label for="jumlah_air" class="form-label">💧 Air Mineral (Rp5.000 / botol)</label>
-                    <input type="number" min="0" value="0" class="form-control" name="jumlah_air" id="jumlah_air">
-                </div>
-                <div class="col-md-4 mb-2">
-                    <div class="form-check mt-4">
-                        <input class="form-check-input extra" type="checkbox" name="biaya[]" value="10000" id="rompi">
-                        <label class="form-check-label" for="rompi">🎽 Rompi Tim (+Rp10.000)</label>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-2">
-                    <div class="form-check mt-4">
-                        <input class="form-check-input extra" type="checkbox" name="biaya[]" value="5000" id="bola">
-                        <label class="form-check-label" for="bola">⚽ Bola Tambahan (+Rp5.000)</label>
-                    </div>
-                </div>
+            <div class="row" id="fasilitasWrap">
+                <?php foreach ($fasilitas as $item) : ?>
+                    <!-- Fasilitas Tambahan -->
+                    <?php if ($item->type == 'checkbox') : ?>
+                        <div class="col-md-4 mb-3">
+                            <div class="form-check mt-4">
+                                <input class="form-check-input fasilitas-input" type="checkbox" name="fasilitas[<?= $item->id ?>]" value="1" id="fasilitas<?= $item->id ?>" data-harga="<?= (float)$item->harga ?>">
+                                <label class="form-check-label" for="fasilitas<?= $item->id ?>"><?= $item->nama ?> (+Rp<?= number_format($item->harga, 0, '.','.') ?>)</label>
+                            </div>
+                        </div>
+                    <?php else: ?>
+                        <div class="col-md-4 mb-3">
+                            <label for="fasilitas<?= $item->id ?>" class="form-label"><?= $item->nama ?> (+Rp<?= number_format($item->harga, 0, '.','.') ?> / <?= $item->satuan ?>)</label>
+                            <input type="<?= $item->type == 'number' ? 'number' : 'text' ?>" min="0" value="0" class="form-control fasilitas-input" name="fasilitas[<?= $item->id ?>]" id="fasilitas<?= $item->id ?>" data-harga="<?= (float)$item->harga ?>">
+                        </div>
+                    <?php endif; ?>
+                <?php endforeach; ?>
             </div>
         </div>
 
@@ -143,6 +143,9 @@ $isTutup = isHariTutup($pengaturan['hari_tutup'] ?? '');
 
         <div class="alert alert-info">
             <strong>Total Bayar:</strong> <span id="totalBayar">Rp 0</span>
+            <input type="hidden" name="total_bayar" value="0" id="inputTotalBayar">
+            <input type="hidden" name="harga_lapangan" value="<?= $lapangan['harga_per_jam'] ?>" id="inputHargaLapangan">
+            <input type="hidden" name="harga_fasilitas" value="0" id="inputHargaFasilitas">
         </div>
 
         <button type="submit" class="btn btn-primary w-100 py-2 fs-5">🛒 Pesan Sekarang</button>
@@ -156,15 +159,11 @@ $isTutup = isHariTutup($pengaturan['hari_tutup'] ?? '');
 <script>
     $(document).ready(function () {
         changeDateBooking(document.getElementById('lapangan_id'), document.getElementById('tanggal'));
+        updateTotalHarga();
     });
 
   // Fungsi untuk update pilihan jam mulai dan selesai
     let slotList = [];
-
-    function timeToMinutes(t) {
-        let [h, m] = t.split(':');
-        return parseInt(h) * 60 + parseInt(m);
-    }
 
     function getSlotsBetween(startIndex) {
         let result = [];
@@ -332,32 +331,73 @@ $isTutup = isHariTutup($pengaturan['hari_tutup'] ?? '');
    
     const hargaPerJam = <?= $lapangan['harga_per_jam'] ?>;
 
-    function hitungTotal() {
-        let jamMulai = parseInt(document.getElementById("jam_mulai").value.split(":")[0]);
-        let jamSelesai = parseInt(document.getElementById("jam_selesai").value.split(":")[0]);
+    function updateTotalHarga()
+    {
+        let totalEl = $('#totalBayar');
+        let total = 0;
+        const hargaLapangan = Number($('#inputHargaLapangan').val());
+        const hargaFasilitas = Number($('#inputHargaFasilitas').val());
+        total += hargaLapangan + hargaFasilitas;
+
+        let hargaFormatted = total.toLocaleString('id-ID', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+
+        totalEl.text(hargaFormatted);
+        $('#inputTotalBayar').val(total);
+        $('#inputHargaLapangan').val(hargaLapangan);
+        $('#inputHargaFasilitas').val(hargaFasilitas);
+    }
+
+     $('#jam_selesai').on('change', function () {
+        const jamMulai = parseInt(document.getElementById("jam_mulai").value.split(":")[0]);
+        const jamSelesai = parseInt(document.getElementById("jam_selesai").value.split(":")[0]);
         let durasi = jamSelesai - jamMulai;
         if (durasi <= 0) durasi = 0;
 
-        let total = durasi * hargaPerJam;
-
-        let jumlahAir = parseInt(document.getElementById("jumlah_air").value) || 0;
-        total += jumlahAir * 5000;
-
-        document.querySelectorAll('.extra:checked').forEach(el => {
-            total += parseInt(el.value);
-        });
-
-        document.getElementById("totalBayar").innerText = "Rp " + total.toLocaleString('id-ID');
-    }
-
-    document.getElementById("jam_mulai").addEventListener("change", hitungTotal);
-    document.getElementById("jam_selesai").addEventListener("change", hitungTotal);
-    document.getElementById("jumlah_air").addEventListener("input", hitungTotal);
-    document.querySelectorAll('.extra').forEach(el => {
-        el.addEventListener("change", hitungTotal);
+        const total = durasi * hargaPerJam;
+        $('#inputHargaLapangan').val(total);
+        updateTotalHarga();
     });
 
-    window.onload = hitungTotal;
+    $(function () {
+    var $wrap         = $('#fasilitasWrap');
+    var $totalEl      = $('#totalBayar');
+
+    function toNumber(val) {
+        if (typeof val === 'number') return val;
+        if (!val) return 0;
+        // hapus pemisah ribuan (.) lalu ganti koma menjadi titik
+        return Number(String(val).replace(/\./g, '').replace(/,/g, '.')) || 0;
+    }
+
+    function calcTotal() {
+        let total = 0;
+
+        $('.fasilitas-input').each(function () {
+        let el   = $(this);
+        let harga = toNumber(el.data('harga'));
+
+        if (el.is(':checkbox')) {
+            if (el.is(':checked')) total += harga;       // checkbox: flat add
+        } else if (el.is('input[type="number"]')) {
+            let qty = Math.max(0, toNumber(el.val()));
+            total += (qty * harga);                        // number: qty * harga
+        } else {
+            // text: treat as qty (jika diisi angka)
+            let qtyText = Math.max(0, toNumber(el.val()));
+            total += (qtyText * harga);
+        }
+        });
+
+        $('#inputHargaFasilitas').val(total);
+        updateTotalHarga();
+    }
+
+    // Delegation: akan tetap bekerja jika input ditambah dinamis
+    $wrap.on('change', '.fasilitas-input', calcTotal);
+    });
 </script>
 
 <?= $this->endSection() ?>

@@ -107,8 +107,20 @@
                                         <td><?= $p['jam_mulai'] ?></td>
                                         <td><?= $p['jam_selesai'] ?></td>
                                         <td><span class="badge <?= $ket_badge_class ?>"><?= $ket ?></span></td>
-                                        <td><?= esc($p['tambahan_fasilitas']) ?></td>
-                                        <td><?= esc($p['catatan']) ?></td>
+                                        <td>
+                                            <?php if (!empty($p['fasilitas'])): ?>
+                                                <ul class="mb-0">
+                                                    <?php foreach ($p['fasilitas'] as $f): ?>
+                                                        <li>
+                                                            <?= esc($f->nama) ?> (<?= $f->qty ?> <?= esc($f->satuan) ?>)
+                                                        </li>
+                                                    <?php endforeach; ?>
+                                                </ul>
+                                            <?php else: ?>
+                                                <em>Tidak ada fasilitas</em>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td><?= esc($p['catatan'] ?: '-') ?></td>
                                         <td>Rp<?= number_format($p['total_bayar'], 0, ',', '.') ?></td>
                                         <td>
                                             <span class="badge bg-<?= $p['status'] == 'pending' ? 'warning' : 'success' ?>">
@@ -119,7 +131,7 @@
                                 <?php endforeach ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="9" class="text-center">Tidak ada data pemesanan untuk periode ini.</td>
+                                    <td colspan="12" class="text-center">Tidak ada data pemesanan untuk periode ini.</td>
                                 </tr>
                             <?php endif; ?>
                         </tbody>

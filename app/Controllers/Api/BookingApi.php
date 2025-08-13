@@ -3,6 +3,8 @@
 namespace App\Controllers\Api;
 
 use App\Controllers\BaseController;
+use App\Models\UserModel;
+
 class BookingApi extends BaseController
 {
     public function cekJamKosong($id, $tanggal)
@@ -72,4 +74,25 @@ class BookingApi extends BaseController
         ]);
     }
 
+    public function getLapanganById($id)
+    {
+        $model = new \App\Models\LapanganModel();
+        $lapangan = $model->find($id);
+
+        if (!$lapangan) {
+            return $this->response->setStatusCode(404)->setJSON(['error' => 'Lapangan tidak ditemukan']);
+        }
+
+        return $this->response->setJSON(['payload' => $lapangan]);
+    }
+
+    public function searchPelanggan()
+    {
+        $q = trim($this->request->getGet('q') ?? '');
+        $model = new UserModel();
+
+        $data = $model->searchPelanggan($q, 20);
+
+        return $this->response->setJSON(['data' => $data]);
+    }
 }

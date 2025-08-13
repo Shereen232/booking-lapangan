@@ -3,18 +3,20 @@
 namespace App\Controllers\Pelanggan;
 
 use App\Controllers\BaseController;
+use App\Models\FasilitasModel;
 use App\Models\LapanganModel;
-use App\Models\PemesananModel;
-use App\Models\PengaturanModel;
+use App\Models\PemesananFasilitasModel;
 
 class PemesananController extends BaseController
 {
     
-    protected $lapanganModel;
+    protected $lapanganModel, $fasilitasModel, $pemesananFasilitasModel;
 
     public function __construct()
     {
         $this->lapanganModel = new LapanganModel();
+        $this->fasilitasModel = new FasilitasModel();
+        $this->pemesananFasilitasModel = new PemesananFasilitasModel();
     }
 
     // Tampilkan daftar lapangan
@@ -76,7 +78,8 @@ class PemesananController extends BaseController
             'sisa_slot' => $sisa_slot,
             'pengaturan' => $pengaturan,
             'isTutup' => $isTutup,
-            'tanggal' => $tanggal
+            'tanggal' => $tanggal,
+            'fasilitas' => $this->fasilitasModel->findAll()
         ];
 
         return view('pelanggan/pemesanan/detail', $data);
@@ -93,18 +96,9 @@ class PemesananController extends BaseController
             $tanggal = $request->getPost('tanggal');
             $jamMulai = $request->getPost('jam_mulai');
             $jamSelesai = $request->getPost('jam_selesai');
-            $jumlahAir = (int) $request->getPost('jumlah_air');
-            $biayaTambahan = $request->getPost('biaya') ?? []; // array
             $catatan = $request->getPost('catatan');
-
-            // Tambahan: mapping fasilitas dari value ke nama
-            $fasilitasDipilih = [];
-            foreach ($biayaTambahan as $val) {
-                if ($val == "10000") $fasilitasDipilih[] = "Rompi Tim";
-                if ($val == "5000") $fasilitasDipilih[] = "Bola Tambahan";
-                // Tambahkan mapping sesuai kebutuhan jika ada fasilitas baru
-            }
-            $tambahanFasilitas = implode(', ', $fasilitasDipilih);
+            $total_bayar = $request->getPost('total_bayar');
+            $fasilitas = $request->getPost('fasilitas');
 
             // ==== Simulasi session sementara ====
             $userId = $session->get('user_id'); // anggap user login
@@ -125,22 +119,9 @@ class PemesananController extends BaseController
             }
 
             // Ambil data lapangan
-            $lapanganModel = new \App\Models\LapanganModel();
-            $lapangan = $lapanganModel->find($lapanganId);
+            $lapangan = $this->lapanganModel->find($lapanganId);
             if (!$lapangan) {
                 return redirect()->back()->with('error', 'Lapangan tidak ditemukan.');
-            }
-
-            // Hitung total bayar
-            $durasi = (int)substr($jamSelesai, 0, 2) - (int)substr($jamMulai, 0, 2);
-            if ($durasi <= 0) {
-                return redirect()->back()->with('error', 'Jam selesai harus lebih besar dari jam mulai.');
-            }
-
-            $total = $durasi * $lapangan['harga_per_jam'];
-            $total += $jumlahAir * 5000;
-            foreach ($biayaTambahan as $biaya) {
-                $total += (int)$biaya;
             }
 
             $order_id = uniqid();
@@ -155,12 +136,18 @@ class PemesananController extends BaseController
                 'tanggal_pesan'       => $tanggal,
                 'jam_mulai'           => $jamMulai,
                 'jam_selesai'         => $jamSelesai,
-                'jumlah_air'          => $jumlahAir,
                 'catatan'             => $catatan,
-                'total_bayar'         => $total,
-                'status'              => 'pending',
-                'tambahan_fasilitas'  => $tambahanFasilitas
+                'total_bayar'         => $total_bayar,
+                'status'              => 'pending'
             ]);
+            
+            foreach ($fasilitas as $key => $value) {
+                $fasilitas[$key] = [
+                    'pemesanan_id' => $pemesananModel->insertID(),
+                    'fasilitas_id' => $key,
+                    'qty'          => $value
+                ];
+            }
 
             // Midtrans
             \Midtrans\Config::$serverKey = env('MIDTRANS_SERVER_KEY');
@@ -171,7 +158,7 @@ class PemesananController extends BaseController
             $params = [
                 'transaction_details' => [
                     'order_id' => $order_id,
-                    'gross_amount' => (int)$total
+                    'gross_amount' => (int)$total_bayar
                 ],
                 'customer_details' => [
                     'first_name' => $namaPemesan,
@@ -188,7 +175,7 @@ class PemesananController extends BaseController
             return $this->response->setJSON([
                 'success' => true,
                 'message' => 'Pemesanan berhasil.',
-                'total' => $total,
+                'total' => $total_bayar,
                 'snapToken' => $snapToken
             ]);
         } catch (\Exception $e) {

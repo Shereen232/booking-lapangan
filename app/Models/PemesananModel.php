@@ -57,14 +57,15 @@ class PemesananModel extends Model
 
     public function getPemesananByDateRange(string $startDate, string $endDate, $status = null)
     {
-        return $this->select('pemesanan.*, lapangan.nama as nama_lapangan, users.nama as nama_pemesan')
+        $query = $this->select('pemesanan.*, lapangan.nama as nama_lapangan, users.nama as nama_pemesan')
                     ->join('lapangan', 'lapangan.id = pemesanan.lapangan_id')
                     ->join('users', 'users.id = pemesanan.user_id')
                     ->where('pemesanan.tanggal_pesan >=', $startDate)
-                    ->where('pemesanan.tanggal_pesan <=', $endDate)
-                    ->where('pemesanan.status', $status)
-                    ->orderBy('pemesanan.tanggal_pesan', 'DESC') // urutkan dari terbaru
-                    ->findAll();
+                    ->where('pemesanan.tanggal_pesan <=', $endDate);
+
+        if ($status) $query->where('pemesanan.status', $status);
+
+        return $query->orderBy('pemesanan.tanggal_pesan', 'DESC')->findAll();
     }
 
     public function getWithRelationUserId($userId)
@@ -77,7 +78,7 @@ class PemesananModel extends Model
 
     public function getJadwalByUserId($id)
     {
-        return $this->select('pemesanan.*, pemesanan.status as status_pembayaran, lapangan.*')
+        return $this->select('pemesanan.*, pemesanan.id as id_pesanan, pemesanan.status as status_pembayaran, lapangan.*')
                     ->join('lapangan', 'lapangan.id = pemesanan.lapangan_id')
                     ->where('user_id', $id)
                     ->where('pemesanan.status', 'settlement')

@@ -3,17 +3,21 @@
 namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
+use App\Models\FasilitasModel;
+use App\Models\PemesananFasilitasModel;
 use App\Models\PemesananModel;
 use Dompdf\Dompdf; 
 use Dompdf\Options; 
 
 class PemesananController extends BaseController
 {
-    protected $pemesananModel;
+    protected $pemesananModel, $fasilitasModel, $pemesananFasilitasModel;
 
     public function __construct()
     {
         $this->pemesananModel = new PemesananModel();
+        $this->fasilitasModel = new FasilitasModel();
+        $this->pemesananFasilitasModel = new PemesananFasilitasModel();
     }
 
    
@@ -43,6 +47,15 @@ class PemesananController extends BaseController
             $tanggalMulai = date('Y-m-d');
             $tanggalSelesai = date('Y-m-d');
             $pemesanan = $this->pemesananModel->getPemesananByDate($tanggalMulai);
+        }
+
+        foreach ($pemesanan as $i => $item) {
+            $fasilitas = $this->pemesananFasilitasModel
+                ->where('pemesanan_id', $item['id'])
+                ->join('fasilitas', 'fasilitas.id = pemesanan_fasilitas.fasilitas_id')
+                ->findAll();
+
+            $pemesanan[$i]['fasilitas'] = $fasilitas ?? null;
         }
 
         $data = [
@@ -107,41 +120,70 @@ class PemesananController extends BaseController
     public function create()
     {
         $lapanganModel = new \App\Models\LapanganModel();
+        $pelangganModel = new \App\Models\UserModel();
         $data = [
             'title' => 'Tambah Pemesanan',
             'lapangan' => $lapanganModel->findAll(),
+            'fasilitas' => $this->fasilitasModel->findAll(),
+            'pelanggan' => $pelangganModel->getPelanggan(),
         ];
         return view('admin/pemesanan/create', $data);
     }
 
+    public function store()
+    {
+        $validation = \Config\Services::validation();
+
+        // Aturan validasi input
+        $rules = [
+            'user_id'           => 'required',
+            'nama_pemesan'      => 'required',
+            'no_hp'             => 'required|numeric',
+            'email'             => 'required|valid_email',
+            'lapangan_id'       => 'required',
+            'tanggal_pesan'     => 'required',
+            'jam_mulai'         => 'required',
+            'jam_selesai'       => 'required',
+            'fasilitas'         => 'permit_empty',
+            'catatan'           => 'permit_empty',
+            'total_bayar'       => 'required',
+        ];
+
+        $data = $this->request->getPost();
+        $fasilitas = $data['fasilitas'];
+        $data['order_id'] = uniqid();
+        $data['kode_booking'] = 'KBK-' . date('Ymd') . '-' . strtoupper(bin2hex(random_bytes(3)));
+        $data['status'] = 'settlement';
+        $data['payment_type'] = 'cash';
+        unset(
+            $data['csrf_test_name'],
+            $data['harga_lapangan'],
+            $data['harga_fasilitas'],
+            $data['no_hp'],
+            $data['email'],
+            $data['fasilitas'],
+        );
+
+        // Jalankan validasi
+        if (!$this->validate($rules)) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Mohon periksa kembali inputan Anda.')
+                ->with('validation', $validation);
+        }
+        $this->pemesananModel->save($data);
+
+        foreach ($fasilitas as $key => $value) {
+            $fasilitas[$key] = [
+                'pemesanan_id' => $this->pemesananModel->insertID(),
+                'fasilitas_id' => $key,
+                'qty'          => $value
+            ];
+        }
+
+        $this->pemesananFasilitasModel->insertBatch($fasilitas);
+        return redirect()->to(base_url('admin/pemesanan'))->with('success', 'Data pemesanan berhasil ditambahkan.');
+    }
+
 }
-
-    // public function edit($id)
-
-
-
-    // // public function edit($id)
-    // // {
-    // //     $pemesanan = $this->pemesananModel->find($id);
-
-    // //     if (!$pemesanan) {
-    // //         return redirect()->to(base_url('admin/pemesanan'))->with('error', 'Data tidak ditemukan.');
-    // //     }
-
-    // //     $data = [
-    // //         'title' => 'Ubah Status Pemesanan',
-    // //         'pemesanan' => $pemesanan
-    // //     ];
-
-    // //     return view('admin/pemesanan/edit', $data);
-    // // }
-
-    // // public function update($id)
-    // // {
-    // //     $status = $this->request->getPost('status');
-
-    // //     $this->pemesananModel->update($id, ['status' => $status]);
-
-    // //     return redirect()->to(base_url('admin/pemesanan'))->with('success', 'Status berhasil diperbarui.');
-    // // }
 

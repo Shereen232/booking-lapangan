@@ -57,6 +57,7 @@
                       data-tanggal="<?= date('d M Y, H:i', strtotime($jadwal['tanggal_pesan'])) ?>"
                       data-jam="<?= $jadwal['jam_mulai'] ?> - <?= $jadwal['jam_selesai'] ?>"
                       data-status="<?= $jadwal['status_pembayaran'] ?>"
+                      data-fasilitas="<?= esc($jadwal['fasilitas']) ?>"
                       data-catatan="<?= esc($jadwal['catatan']) ?>"
                       data-total="<?= number_format($jadwal['total_bayar'], 0, ',', '.') ?>">
                     📑 Lihat Detail
@@ -89,6 +90,7 @@
         <p><strong>Tanggal Booking:</strong> <span id="modalTanggal"></span></p>
         <p><strong>Waktu:</strong> <span id="modalJam"></span></p>
         <p><strong>Status Pembayaran:</strong> <span id="modalStatusPembayaran"></span></p>
+        <p><strong>Fasilitas:</strong> <span id="modalFasilitas">-</span></p>
         <p><strong>Catatan:</strong> <span id="modalCatatan"></span></p>
         <p><strong>Total Pembayaran:</strong> Rp <span id="modalTotal"></span></p>
       </div>
@@ -111,6 +113,14 @@
     var statusPembayaran = button.getAttribute('data-status');
     var catatan = button.getAttribute('data-catatan');
     var total = button.getAttribute('data-total');
+    var fasilitas = JSON.parse(button.getAttribute('data-fasilitas'));
+    modal.querySelector('#modalFasilitas').textContent = '-';
+
+    fasilitas.forEach(element => {
+      var li = document.createElement('li');
+      li.textContent = element.nama + ' (' + element.qty + ' ' + element.satuan + ')';
+      modal.querySelector('#modalFasilitas').appendChild(li);
+    });
 
     modal.querySelector('#modalNamaLapangan').textContent = namaLapangan;
     modal.querySelector('#modalNamaPemesan').textContent = namaPemesan;
