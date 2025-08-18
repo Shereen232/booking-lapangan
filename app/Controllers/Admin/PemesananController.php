@@ -136,7 +136,6 @@ class PemesananController extends BaseController
 
         // Aturan validasi input
         $rules = [
-            'user_id'           => 'required',
             'nama_pemesan'      => 'required',
             'no_hp'             => 'required|numeric',
             'email'             => 'required|valid_email',
@@ -155,14 +154,22 @@ class PemesananController extends BaseController
         $data['kode_booking'] = 'KBK-' . date('Ymd') . '-' . strtoupper(bin2hex(random_bytes(3)));
         $data['status'] = 'settlement';
         $data['payment_type'] = 'cash';
+
+        // jika user_id kosong => hapus dari $data agar tidak dimasukkan ke database
+        if (empty($data['user_id'])) {
+            unset($data['user_id']);
+        }
+
+        // hapus field-field lain yg tidak perlu disimpan
         unset(
             $data['csrf_test_name'],
             $data['harga_lapangan'],
             $data['harga_fasilitas'],
             $data['no_hp'],
             $data['email'],
-            $data['fasilitas'],
+            $data['fasilitas']
         );
+
 
         // Jalankan validasi
         if (!$this->validate($rules)) {

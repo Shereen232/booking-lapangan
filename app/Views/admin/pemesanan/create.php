@@ -27,7 +27,7 @@
                 <label for="user_name" class="form-label">User</label>
                 <div class="input-group">
                     <input type="hidden" name="user_id" id="user_id" value="<?= old('user_id') ?>" required>
-                    <input type="text" class="form-control" id="user_name" placeholder="Pilih user..." readonly>
+                    <input type="text" class="form-control" id="user_name" placeholder="Pilih user..."  >
                     <button class="btn btn-outline-secondary" type="button" id="btnOpenUserSearch">
                     <i class="ti ti-search"></i> Cari
                     </button>
@@ -43,7 +43,7 @@
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label class="form-label">Nama Pemesan</label>
-                <input type="text" name="nama_pemesan" class="form-control" placeholder="Masukkan Nama Pemesan" value="<?= old('nama_pemesan') ?>" readonly>
+                <input type="text" name="nama_pemesan" class="form-control" placeholder="Masukkan Nama Pemesan" value="<?= old('nama_pemesan') ?>"  >
                 <?php if ($validation->hasError('nama_pemesan')): ?>
                     <small class="text-danger">
                     <?= $validation->getError('nama_pemesan') ?>
@@ -52,7 +52,7 @@
             </div>
             <div class="col-md-6 mb-3">
                 <label class="form-label">No. HP</label>
-                <input type="text" name="no_hp" class="form-control" placeholder="Masukkan No. HP" value="<?= old('no_hp') ?>" readonly>
+                <input type="text" name="no_hp" class="form-control" placeholder="Masukkan No. HP" value="<?= old('no_hp') ?>"  >
                 <?php if ($validation->hasError('no_hp')): ?>
                     <small class="text-danger">
                     <?= $validation->getError('no_hp') ?>
@@ -61,7 +61,7 @@
             </div>
             <div class="col-md-6 mb-3">
                 <label class="form-label">Email</label>
-                <input type="email" name="email" class="form-control" placeholder="Masukkan Email" value="<?= old('email') ?>" readonly>
+                <input type="email" name="email" class="form-control" placeholder="Masukkan Email" value="<?= old('email') ?>"  >
                 <?php if ($validation->hasError('email')): ?>
                     <small class="text-danger">
                     <?= $validation->getError('email') ?>

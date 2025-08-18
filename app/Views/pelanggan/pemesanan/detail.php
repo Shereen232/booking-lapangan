@@ -92,11 +92,12 @@ $isTutup = isHariTutup($pengaturan['hari_tutup'] ?? '');
                     <span class="input-group-text bg-white border-end-0">
                         <i class="bi bi-calendar-date"></i>
                     </span>
-                    <input type="date"
+                   <input type="date"
                         class="form-control border-start-0"
                         name="tanggal"
                         id="tanggal"
                         value="<?= $tanggal ?>"
+                        min="<?= date('Y-m-d') ?>"
                         onchange="window.location.href='<?= base_url('pelanggan/pemesanan/detail/'.$lapangan['id']) ?>?tanggal='+this.value">
                 </div>
             </div>
