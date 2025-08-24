@@ -57,8 +57,8 @@
 
 
         <div class="table-responsive">
-            <table class="table table-striped">
-                <thead>
+            <table id="tabelPembayaran" class="table table-striped table-bordered">
+                <thead class="table-light">
                     <tr>
                         <th>No</th>
                         <th>Nama Pelanggan</th>
@@ -71,25 +71,21 @@
                 </thead>
                 <tbody>
                     <?php if (!empty($pemesanan)) : ?>
-                    <?php $no = 1; foreach ($pemesanan as $p): ?>
-                        <tr>
-                            <td><?= $no++ ?></td>
-                            <td><?= esc($p['nama_pemesan']) ?></td>
-                            <td><?= esc($p['nama_lapangan']) ?></td>
-                            <td><?= date('d M Y', strtotime($p['tanggal_pesan'])) ?></td>
-                            <td>
-                                <span class="badge bg-<?= $p['status'] == 'pending' ? 'warning' : 'success' ?>">
-                                    <?php if ($p['status'] == 'pending'): ?>
-                                        Menunggu Pembayaran
-                                    <?php else: ?>
-                                        Lunas
-                                    <?php endif; ?>
-                                </span>
-                            </td>
-                            <td><?= $p['payment_type'] ?></td>
-                            <td>Rp<?= number_format($p['total_bayar'], 0, ',', '.') ?></td>
-                        </tr>
-                    <?php endforeach ?>
+                        <?php $no = 1; foreach ($pemesanan as $p): ?>
+                            <tr>
+                                <td><?= $no++ ?></td>
+                                <td><?= esc($p['nama_pemesan']) ?></td>
+                                <td><?= esc($p['nama_lapangan']) ?></td>
+                                <td><?= date('d M Y', strtotime($p['tanggal_pesan'])) ?></td>
+                                <td>
+                                    <span class="badge bg-<?= $p['status'] == 'pending' ? 'warning' : 'success' ?>">
+                                        <?= $p['status'] == 'pending' ? 'Menunggu Pembayaran' : 'Lunas' ?>
+                                    </span>
+                                </td>
+                                <td><?= $p['payment_type'] ?></td>
+                                <td>Rp<?= number_format($p['total_bayar'], 0, ',', '.') ?></td>
+                            </tr>
+                        <?php endforeach ?>
                     <?php else: ?>
                         <tr>
                             <td colspan="7" class="text-center">Tidak ada data pemesanan untuk periode ini.</td>
@@ -98,6 +94,34 @@
                 </tbody>
             </table>
         </div>
+
     </div>
 </div>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    $('#tabelPembayaran').DataTable({
+        "pageLength": 10,
+        "ordering": true,
+        "lengthChange": true,
+        "dom": 't<"bottom"lip>',
+        "language": {
+            "search": "Cari:",
+            "lengthMenu": "Tampilkan _MENU_ data",
+            "info": "Menampilkan _START_ - _END_ dari _TOTAL_ data",
+            "paginate": {
+                "first": "Awal",
+                "last": "Akhir",
+                "next": "›",
+                "previous": "‹"
+            }
+        }
+    });
+});
+</script>
+    
 <?= $this->endSection() ?>

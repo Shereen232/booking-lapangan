@@ -82,6 +82,7 @@ class PemesananModel extends Model
                     ->join('lapangan', 'lapangan.id = pemesanan.lapangan_id')
                     ->where('user_id', $id)
                     ->where('pemesanan.status', 'settlement')
+                    ->orderBy('pemesanan.tanggal_pesan', 'DESC')
                     ->findAll();
     }
 

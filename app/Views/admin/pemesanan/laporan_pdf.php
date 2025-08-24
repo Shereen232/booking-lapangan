@@ -53,30 +53,44 @@ if (file_exists($path)) {
             border-collapse: collapse;
             margin-top: 20px;
         }
+
         th, td {
-            border: 1px solid #aaa;
-            padding: 6px 10px;
-            text-align: left;
+            border: 1px solid #ccc;
+            padding: 6px 8px;
+            font-size: 9pt;
+            vertical-align: top;
         }
+
         th {
-            background-color: #f0f0f0;
+            background-color: #f5f5f5;
             font-weight: bold;
+            text-align: center;
             font-size: 9pt;
         }
-        td {
-            font-size: 9pt;
-        }
-        .badge {
-            padding: 3px 8px;
-            border-radius: 4px;
 
+        td ul {
+            margin: 0;
+            padding-left: 15px;
+            list-style-type: disc;
+        }
+
+        td em {
+            color: #000000ff;
             font-size: 8pt;
-
         }
-        .bg-warning { background-color: #ffffffff; color: #000; }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 8pt;
+            color: #000000ff;
+        }
+
+        .bg-warning { background-color: #ffffffff; }
         .bg-success { background-color: #ffffffff; }
         .bg-pending { background-color: #ffffffff; }
-        .bg-info { background-color: #ffffffff; }
+        .bg-info    { background-color: #ffffffff; }
 
         .footer {
             text-align: right;
@@ -157,7 +171,17 @@ if (file_exists($path)) {
                         }
                     }
 
+                     // 🔹 Mapping status pembayaran → text alias
+                    $statusAlias = [
+                        'pending'    => 'Menunggu Pembayaran',
+                        'settlement' => 'Lunas',
+                        'cancel'     => 'Dibatalkan',
+                        'expire'     => 'Kadaluarsa'
+                    ];
+                    $statusText  = isset($statusAlias[$p['status']]) ? $statusAlias[$p['status']] : ucfirst($p['status']);
+                    
                     $statusClass = $p['status'] == 'pending' ? 'bg-warning' : 'bg-success';
+                
                 ?>
                 <tr>
                     <td><?= $no++ ?></td>
@@ -168,10 +192,22 @@ if (file_exists($path)) {
                     <td><?= $p['jam_mulai'] ?></td>
                     <td><?= $p['jam_selesai'] ?></td>
                     <td><span class="badge <?= $ketClass ?>"><?= $ket ?></span></td>
-                    <td><?= esc($p['tambahan_fasilitas']) ?></td>
+                    <td>
+                            <?php if (!empty($p['fasilitas'])): ?>
+                                <ul class="mb-0">
+                                    <?php foreach ($p['fasilitas'] as $f): ?>
+                                        <li>
+                                            <?= esc($f->nama) ?> (<?= $f->qty ?> <?= esc($f->satuan) ?>)
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            <?php else: ?>
+                                <em>Tidak ada fasilitas</em>
+                            <?php endif; ?>
+                        </td>
                     <td><?= esc($p['catatan']) ?></td>
                     <td>Rp<?= number_format($p['total_bayar'], 0, ',', '.') ?></td>
-                    <td><span class="badge <?= $statusClass ?>"><?= ucfirst($p['status']) ?></span></td>
+                    <td><span class="badge <?= $statusClass ?>"><?= $statusText ?></span></td>
                 </tr>
             <?php endforeach; ?>
         <?php else: ?>

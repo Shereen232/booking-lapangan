@@ -79,7 +79,15 @@
             </div>
             <div class="col-md-3 mb-3">
                 <label class="form-label">Tanggal</label>
-                <input type="date" id="tanggal_pesan" name="tanggal_pesan" class="form-control" value="<?= date('Y-m-d') ?>" required>
+                <input 
+                    type="date" 
+                    id="tanggal_pesan" 
+                    name="tanggal_pesan" 
+                    class="form-control" 
+                    value="<?= date('Y-m-d') ?>" 
+                    min="<?= date('Y-m-d') ?>" 
+                    required
+                >
                 <?php if ($validation->hasError('tanggal_pesan')): ?>
                     <small class="text-danger">
                         <?= $validation->getError('tanggal_pesan') ?>

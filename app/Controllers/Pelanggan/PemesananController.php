@@ -141,12 +141,23 @@ class PemesananController extends BaseController
                 'status'              => 'pending'
             ]);
             
-            foreach ($fasilitas as $key => $value) {
-                $fasilitas[$key] = [
-                    'pemesanan_id' => $pemesananModel->insertID(),
-                    'fasilitas_id' => $key,
-                    'qty'          => $value
-                ];
+            $insertId = $pemesananModel->insertID();
+
+            // Simpan fasilitas (jika ada)
+            if (!empty($fasilitas)) {
+                $rows = [];
+                foreach ($fasilitas as $fId => $qty) {
+                    if ($qty > 0) { // hanya simpan kalau qty > 0
+                        $rows[] = [
+                            'pemesanan_id' => $insertId,
+                            'fasilitas_id' => $fId,
+                            'qty'          => $qty
+                        ];
+                    }
+                }
+                if (!empty($rows)) {
+                    $this->pemesananFasilitasModel->insertBatch($rows);
+                }
             }
 
             // Midtrans

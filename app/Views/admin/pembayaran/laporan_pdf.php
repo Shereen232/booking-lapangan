@@ -10,6 +10,18 @@ if (file_exists($path)) {
     $base64 = '';
 }
 ?>
+
+<?php
+$statusAlias = [
+    'settlement' => 'Lunas',
+    'pending'    => 'Menunggu Pembayaran',
+    'expire'     => 'Kadaluarsa',
+    'cancel'     => 'Dibatalkan',
+    'deny'       => 'Ditolak',
+    'failure'    => 'Gagal',
+];
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -140,8 +152,16 @@ if (file_exists($path)) {
                     <td><?= esc($p['payment_type']) ?></td>
                     <td>Rp<?= number_format($p['total_bayar'], 0, ',', '.') ?></td>
                     <td>
-                        <span class="badge badge-<?= $p['status'] === 'pending' ? 'warning' : 'success' ?>">
-                            <?= ucfirst($p['status']) ?>
+                        <?php 
+                            $status = $p['status'];
+                            $label = $statusAlias[$status] ?? ucfirst($status); // fallback kalau tidak ada di array
+                            $badgeClass = 'secondary';
+                            if ($status === 'settlement') $badgeClass = 'success';
+                            elseif ($status === 'pending') $badgeClass = 'warning';
+                            elseif (in_array($status, ['expire','cancel','deny','failure'])) $badgeClass = 'danger';
+                        ?>
+                        <span class="badge badge-<?= $badgeClass ?>">
+                            <?= $label ?>
                         </span>
                     </td>
                 </tr>
